@@ -3,10 +3,9 @@ const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-180.png',
-  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&display=swap'
+  './icon-192.png',
+  './icon-512.png',
+  './icon-180.png'
 ];
 
 self.addEventListener('install', e => {
