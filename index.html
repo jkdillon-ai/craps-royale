@@ -2,994 +2,612 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Craps Royale">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0e0600">
-<meta name="description" content="Learn and play casino craps — practice before Vegas!">
+<meta name="theme-color" content="#0a0400">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="favicon.png">
-<title>Craps Royale — Learn & Play</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Oswald:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>Craps Royale</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{height:100%;background:#060606}
-body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-#installBanner{display:none;position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#1c0c00;border:1px solid #c9a84c;border-radius:12px;padding:14px 20px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.7);max-width:340px;width:calc(100% - 32px)}
-#installBanner.show{display:flex;align-items:center;gap:12px}
-#installBanner .ib-icon{font-size:2rem;flex-shrink:0}
-#installBanner .ib-text{flex:1;font-size:0.82rem;color:#f0e6c8;line-height:1.4}
-#installBanner .ib-text strong{color:#e8c96a;display:block;margin-bottom:2px;font-size:0.88rem}
-#installBanner button{background:none;border:none;color:#888;font-size:1.1rem;cursor:pointer;flex-shrink:0;padding:4px}
-:root{
-  --felt:#1c5c30;--felt-dark:#0f3a1c;--felt-med:#236b36;
-  --gold:#c9a84c;--gold-light:#e8c96a;--gold-dim:#6a5820;
-  --wood:#2c1508;--cream:#f0e6c8;--red:#c03030;--blue:#2471a3;
-  --green-win:#4ecb6b;--red-lose:#e05050;
-}
-body{background:#060606;background-image:radial-gradient(ellipse at 50% 0%,#1a0800 0%,#060606 65%);color:var(--cream);font-family:'Oswald',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-header{width:100%;background:linear-gradient(180deg,#1c0c00 0%,#0e0600 100%);border-bottom:2px solid var(--gold-dim);padding:14px 32px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--gold-light);letter-spacing:0.1em;text-shadow:0 0 30px rgba(232,201,106,0.4)}
-.balance-display{font-size:1.3rem;font-weight:600;color:var(--gold);letter-spacing:0.1em}
-.balance-amt{color:#4ecb6b;font-family:'Share Tech Mono',monospace}
-.tabs{display:flex;gap:4px;padding:14px 20px 0;background:#0e0600;width:100%;max-width:1120px}
-.tab{padding:10px 28px;border:2px solid var(--gold-dim);border-bottom:none;border-radius:6px 6px 0 0;background:transparent;color:var(--gold-dim);font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:600;letter-spacing:0.12em;cursor:pointer;transition:all 0.2s;text-transform:uppercase}
-.tab.active{background:var(--felt-dark);color:var(--gold-light);border-color:var(--gold)}
-.tab:hover:not(.active){color:var(--gold);border-color:var(--gold)}
-.content{width:100%;max-width:1120px;background:var(--felt-dark);border:2px solid var(--gold-dim);border-top:none;flex:1}
-.panel{display:none}.panel.active{display:block}
+html,body{height:100%;overflow:hidden;background:#050200}
+body{font-family:'Barlow Condensed',sans-serif;color:#fff;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;user-select:none}
 
-/* ====== GAME PANEL ====== */
-.game-panel{padding:18px}
-.game-status{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.55);border:1px solid var(--gold-dim);border-radius:8px;padding:12px 20px;margin-bottom:16px}
-.status-phase{font-size:0.95rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase}
-.phase-co{color:#5de8c0}.phase-pt{color:var(--gold-light)}
-.phase-hint{font-size:0.75rem;color:#666;margin-top:3px}
-.point-puck{display:inline-flex;width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700}
-.puck-off{background:#2a2a2a;color:#666;border:2px solid #444}
-.puck-on{background:#fff;color:#111;border:2px solid var(--gold)}
-.game-layout{display:grid;grid-template-columns:1fr 290px;gap:16px}
+/* ROLL HISTORY */
+.rh-bar{background:#000;border-bottom:2px solid #c9a84c;display:flex;align-items:center;height:36px;flex-shrink:0;overflow:hidden}
+.rh-label{background:#1a2060;color:#fff;font-size:0.62rem;font-weight:700;letter-spacing:0.05em;padding:0 8px;height:100%;display:flex;align-items:center;flex-shrink:0;border-right:2px solid #c9a84c;white-space:nowrap;gap:5px}
+.rh-new{background:#e03020;color:#fff;font-size:0.52rem;font-weight:900;padding:1px 4px;border-radius:2px}
+.rh-track{display:flex;align-items:center;gap:4px;padding:0 6px;overflow-x:auto;flex:1;scrollbar-width:none}
+.rh-track::-webkit-scrollbar{display:none}
+.rh-chip{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:900;flex-shrink:0;border:2px solid rgba(255,255,255,0.25)}
+.rh-seven{background:#e03020;color:#fff}.rh-point{background:#d4a820;color:#000}.rh-craps{background:#555;color:#fff}.rh-other{background:#1a5c28;color:#fff}
+
+/* STATS BAR */
+.stats-bar{background:#000a30;border-bottom:2px solid #c9a84c;display:flex;align-items:center;justify-content:space-between;padding:0 10px;height:30px;flex-shrink:0}
+.stat-grp{display:flex;align-items:center;gap:5px}
+.stat-lbl{font-size:0.56rem;font-weight:700;color:#7090ff;letter-spacing:0.1em}
+.stat-val{font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:#40ff80}
+.stat-credit .stat-val{color:#ffdd40;font-size:0.95rem}
+.stat-credit .stat-lbl{color:#c9a84c}
+.sdiv{width:1px;height:18px;background:#1a3080}
+
+/* MAIN */
+.main{display:flex;flex:1;overflow:hidden;min-height:0}
+.table-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.right-panel{width:88px;flex-shrink:0;background:#111;border-left:2px solid #c9a84c;display:flex;flex-direction:column;overflow:hidden}
 
 /* TABLE */
-.craps-table{background:var(--felt);border:5px solid var(--wood);border-radius:14px;overflow:hidden;box-shadow:inset 0 0 80px rgba(0,0,0,0.4),0 8px 40px rgba(0,0,0,0.8);background-image:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(0,0,0,0.025) 5px,rgba(0,0,0,0.025) 10px)}
-.t-row{display:flex;border-bottom:2px solid rgba(201,168,76,0.35)}.t-row:last-child{border-bottom:none}
-.bz{flex:1;padding:9px 6px;text-align:center;border-right:2px solid rgba(201,168,76,0.35);cursor:pointer;position:relative;transition:background 0.15s;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.bz:last-child{border-right:none}
-.bz:hover:not(.bz-off){background:rgba(255,255,255,0.12)}
-.bz.bz-off{opacity:0.45;cursor:not-allowed;pointer-events:none}
-.bz.has-bet{background:rgba(201,168,76,0.1)}
-.bz.is-pt{background:rgba(255,255,255,0.14)!important;box-shadow:inset 0 0 12px rgba(255,255,255,0.1)}
-.zl{font-family:'Oswald',sans-serif;font-weight:700;font-size:0.73rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.92);line-height:1.2}
-.zp{font-size:0.62rem;color:rgba(201,168,76,0.8);margin-top:3px}
-.chip-stack{margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;justify-content:center;min-height:10px}
-.tc{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:700;border:2px dashed rgba(255,255,255,0.45);flex-shrink:0}
+.table{flex:1;display:flex;flex-direction:column;background:#2a7a30;background-image:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(0,0,0,0.025) 8px,rgba(0,0,0,0.025) 16px);overflow:hidden;min-height:0}
+.tb{border-bottom:2px solid rgba(201,168,76,0.45)}
+.tbt{border-bottom:3px solid rgba(201,168,76,0.65)}
 
-/* DICE */
-.dice-area{background:var(--felt-med);border-bottom:2px solid rgba(201,168,76,0.35);padding:16px;display:flex;align-items:center;justify-content:center;gap:22px;min-height:105px}
-.die{width:62px;height:62px;background:#fff;border-radius:10px;box-shadow:3px 3px 0 #aaa,0 4px 16px rgba(0,0,0,0.5);position:relative;flex-shrink:0}
-.dot{width:10px;height:10px;background:#1a1a1a;border-radius:50%;position:absolute;transform:translate(-50%,-50%)}
-.die.rolling{animation:spin 0.65s ease}
-@keyframes spin{0%{transform:rotate(0) scale(1)}25%{transform:rotate(90deg) scale(0.8)}50%{transform:rotate(200deg) scale(1.1)}75%{transform:rotate(300deg) scale(0.9)}100%{transform:rotate(360deg) scale(1)}}
-.dice-mid{text-align:center}
-.dice-total{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:var(--gold-light);text-shadow:0 0 12px rgba(232,201,106,0.5)}
-.dice-msg{font-size:0.88rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px}
-.dm-win{color:#4ecb6b}.dm-lose{color:#e05050}.dm-pt{color:var(--gold-light)}.dm-n{color:#888}
+/* NUMBERS ROW */
+.num-section{display:flex;flex-shrink:0}
+.dc-cell{width:46px;flex-shrink:0;background:#1e5820;border-right:2px solid rgba(201,168,76,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:2px;position:relative;transition:background 0.12s}
+.dc-cell:active{background:#174014}
+.dc-cell.has-bet{background:rgba(201,168,76,0.12)}
+.dc-title{font-size:0.52rem;font-weight:700;color:#fff;text-align:center;line-height:1.25;letter-spacing:0.02em}
+.nums-grid{flex:1;display:flex}
+.num-col{flex:1;display:flex;flex-direction:column;align-items:center;border-right:2px solid rgba(201,168,76,0.35);cursor:pointer;position:relative;transition:background 0.12s;overflow:hidden}
+.num-col:last-child{border-right:none}
+.num-col:active{background:rgba(255,255,255,0.18)!important}
+.num-col.has-bet{background:rgba(201,168,76,0.08)}
+.num-col.is-point{background:rgba(255,220,40,0.2)!important}
+.lay-lbl{width:100%;text-align:center;background:rgba(0,0,0,0.28);font-size:0.42rem;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:0.08em;padding:1px 0;flex-shrink:0}
+.num-val{font-size:1.15rem;font-weight:900;color:#e8c030;line-height:1;padding:1px 0;flex-shrink:0;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
+.buy-lbl{width:100%;text-align:center;background:rgba(0,0,0,0.22);font-size:0.38rem;font-weight:700;color:rgba(255,200,80,0.65);letter-spacing:0.04em;padding:1px 0;flex-shrink:0}
+.num-puck{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.44rem;font-weight:900;margin:1px auto;transition:all 0.2s;flex-shrink:0}
+.puck-off{background:#2a2a2a;color:#555;border:1px solid #444}
+.puck-on{background:#fff;color:#111;border:2px solid #c9a84c;box-shadow:0 0 6px rgba(201,168,76,0.7)}
+.num-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:1px;padding:1px;min-height:6px}
 
-/* PLACE NUMBERS */
-.place-row{display:flex}
-.pn{flex:1;padding:12px 4px;text-align:center;border-right:2px solid rgba(201,168,76,0.35);cursor:pointer;transition:background 0.15s;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.pn:last-child{border-right:none}
-.pn:hover:not(.pn-off){background:rgba(255,255,255,0.12)}
-.pn.pn-off{opacity:0.38;cursor:not-allowed;pointer-events:none}
-.pn.has-bet{background:rgba(201,168,76,0.1)}
-.pn.is-pt{background:rgba(255,255,255,0.15)!important}
-.pn-num{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:#fff;line-height:1}
-.pn-label{font-size:0.6rem;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px}
-.pn-pay{font-size:0.6rem;color:rgba(201,168,76,0.65);margin-top:3px}
+/* COME */
+.come-zone{flex-shrink:0;background:#1a3a8a;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:background 0.12s}
+.come-zone:active{background:#1e45a0}
+.come-zone.has-bet{box-shadow:inset 0 0 16px rgba(201,168,76,0.12)}
+.come-zone.z-off{opacity:0.42;pointer-events:none}
+.come-title{font-size:2rem;font-weight:900;color:#e83020;letter-spacing:0.15em;text-shadow:2px 2px 0 rgba(0,0,0,0.4);line-height:1}
+.come-chips{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-wrap:wrap;gap:1px;justify-content:flex-end;max-width:50px}
 
-/* DON'T BAR */
-.dont-bg{background:rgba(0,0,0,0.2)!important}
+/* FIELD */
+.field-zone{flex-shrink:0;background:#236928;display:flex;align-items:center;justify-content:center;cursor:pointer;gap:4px;padding:2px 4px;position:relative;transition:background 0.12s}
+.field-zone:active{background:#2a7830}
+.field-zone.has-bet{background:rgba(201,168,76,0.1)}
+.f-pays{font-size:0.48rem;font-weight:700;color:#e83020;text-align:center;line-height:1.3;white-space:nowrap}
+.f-nums{font-size:0.68rem;font-weight:700;color:#fff;letter-spacing:0.04em;text-align:center}
+.f-lbl{font-size:0.6rem;font-weight:900;color:#fff;letter-spacing:0.12em}
+.field-chips{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;flex-wrap:wrap;gap:1px;justify-content:flex-end}
+
+/* DON'T PASS */
+.dp-zone{flex-shrink:0;background:#1c5020;display:flex;align-items:center;padding:0 6px;gap:5px;cursor:pointer;position:relative;transition:background 0.12s}
+.dp-zone:active{background:#234e1e}
+.dp-zone.has-bet{background:rgba(201,168,76,0.1)}
+.dp-zone.z-off{opacity:0.42;pointer-events:none}
+.dp-title{font-size:0.65rem;font-weight:700;color:#fff;letter-spacing:0.05em;white-space:nowrap}
+.dp-dice{display:flex;gap:2px;opacity:0.5}
+.dp-die{width:9px;height:9px;background:#333;border-radius:1px}
+.dp-chips{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;gap:1px}
+
+/* PASS LINE */
+.pl-zone{flex-shrink:0;background:linear-gradient(180deg,#1e40a0 0%,#14287a 100%);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:filter 0.12s}
+.pl-zone:active{filter:brightness(1.15)}
+.pl-zone.has-bet{box-shadow:inset 0 0 18px rgba(201,168,76,0.12)}
+.pl-zone.z-off{opacity:0.42;pointer-events:none}
+.pl-title{font-size:1.85rem;font-weight:900;color:#fff;letter-spacing:0.2em;text-shadow:1px 2px 0 rgba(0,0,0,0.5)}
+.pl-chips{position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-wrap:wrap;gap:1px;justify-content:flex-end;max-width:60px}
+
+/* ODDS */
+.odds-zone{flex-shrink:0;background:#0e1e58;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;gap:6px;padding:1px 6px;transition:background 0.12s}
+.odds-zone:active{background:#122468}
+.odds-zone.has-bet{background:rgba(201,168,76,0.08)}
+.odds-zone.z-off{opacity:0.38;pointer-events:none}
+.odds-title{font-size:0.72rem;font-weight:800;color:#8090ff;letter-spacing:0.2em}
+.odds-info{font-size:0.44rem;color:#4a5cb0;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.odds-chips{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;gap:1px}
 
 /* RIGHT PANEL */
-.right-panel{display:flex;flex-direction:column;gap:12px}
-.rp-card{background:rgba(0,0,0,0.42);border:1px solid var(--gold-dim);border-radius:8px;padding:14px}
-.sec-title{font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:10px}
-.chips-row{display:flex;gap:8px;flex-wrap:wrap}
-.chip{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;cursor:pointer;border:3px dashed rgba(255,255,255,0.45);transition:all 0.18s;box-shadow:0 4px 10px rgba(0,0,0,0.45);user-select:none}
-.chip:hover{transform:translateY(-2px)}
-.chip.sel{transform:translateY(-4px) scale(1.12);box-shadow:0 0 0 3px var(--gold-light),0 8px 18px rgba(0,0,0,0.5)}
+.rp-title{font-size:0.48rem;font-weight:700;letter-spacing:0.1em;color:#c9a84c;text-align:center;padding:2px 0;background:rgba(0,0,0,0.4);border-bottom:1px solid #2a2a2a;text-transform:uppercase;flex-shrink:0}
+.hw-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#2a2a2a;flex-shrink:0}
+.hw-cell{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;cursor:pointer;gap:1px;transition:background 0.12s}
+.hw-cell:active{background:#252525}
+.hw-cell.has-bet{background:rgba(201,168,76,0.08)}
+.hw-pay{font-size:0.48rem;font-weight:700;color:#e83020;letter-spacing:0.04em}
+.hw-name{font-size:0.42rem;color:#777;letter-spacing:0.04em}
+.hw-chips{display:flex;gap:1px;flex-wrap:wrap;justify-content:center;min-height:4px}
+.or-cell{background:#1a1a1a;border-bottom:1px solid #2a2a2a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 2px;cursor:pointer;flex:1;transition:background 0.12s;min-height:0}
+.or-cell:active{background:#252525}
+.or-cell.has-bet{background:rgba(201,168,76,0.07)}
+.or-pay{font-size:0.5rem;font-weight:700;color:#fff;letter-spacing:0.04em;line-height:1.2}
+.or-name{font-size:0.4rem;color:#aaa;letter-spacing:0.05em}
+.horn-lbl{font-size:0.54rem;font-weight:900;color:#e8c030;letter-spacing:0.08em}
+.or-chips{display:flex;gap:1px;flex-wrap:wrap;justify-content:center;min-height:4px}
+.or-cells-wrap{display:flex;flex-direction:column;flex:1;min-height:0}
+
+/* WIN CONDITIONS */
+.win-cond{background:#000a30;border-top:2px solid #c9a84c;display:flex;align-items:center;padding:0 5px;gap:3px;height:26px;flex-shrink:0}
+.wc-lbl{font-size:0.44rem;font-weight:700;color:#5070c0;letter-spacing:0.05em;margin-right:2px;flex-shrink:0;line-height:1.2}
+.wc-nums{display:flex;gap:2px;flex:1}
+.wc-num{min-width:18px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.58rem;font-weight:700;background:#111;color:#333;border:1px solid #222;transition:all 0.2s}
+.wc-num.lit{background:#d4a820;color:#000;border-color:#e8c030;box-shadow:0 0 5px rgba(212,168,32,0.6)}
+.wc-num.lit-red{background:#e03020;color:#fff;border-color:#f04030;box-shadow:0 0 5px rgba(224,48,32,0.6)}
+
+/* BOTTOM */
+.bot-row1{display:flex;align-items:center;gap:6px;padding:4px 6px;border-top:2px solid #c9a84c;background:#050200;flex-shrink:0}
+.bot-row2{display:flex;align-items:center;gap:5px;padding:4px 6px 4px;background:#050200;flex-shrink:0}
+.dice-area{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.die{width:30px;height:30px;background:#f5f0e8;border-radius:5px;box-shadow:2px 2px 0 #999,0 2px 8px rgba(0,0,0,0.6);position:relative;flex-shrink:0}
+.dot{background:#1a1a1a;border-radius:50%;position:absolute;transform:translate(-50%,-50%)}
+.die.rolling{animation:shk 0.5s ease}
+@keyframes shk{0%{transform:rotate(0)}20%{transform:rotate(-15deg) scale(0.9)}40%{transform:rotate(12deg) scale(1.1)}60%{transform:rotate(-8deg)}80%{transform:rotate(5deg)}100%{transform:rotate(0)}}
+.dice-total{font-family:'Share Tech Mono',monospace;font-size:1.5rem;font-weight:700;color:#e8c030;min-width:28px;text-align:center;text-shadow:0 0 10px rgba(232,192,48,0.5)}
+.phase-strip{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 4px;min-width:0}
+.phase-title{font-size:0.58rem;font-weight:800;letter-spacing:0.08em;color:#7090ff;white-space:nowrap}
+.phase-hint{font-size:0.5rem;color:#555;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.total-bet{font-size:0.54rem;color:#c9a84c;font-family:'Share Tech Mono',monospace}
+.btn-roll{background:linear-gradient(135deg,#c9a84c,#e8c030);color:#0a0400;border:none;border-radius:5px;font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:800;letter-spacing:0.1em;cursor:pointer;padding:7px 10px;box-shadow:0 3px 10px rgba(201,168,76,0.4);flex-shrink:0;text-transform:uppercase}
+.btn-roll:disabled{opacity:0.45;cursor:not-allowed}
+.chip-sel-lbl{font-size:0.44rem;color:#666;letter-spacing:0.08em;text-align:center;margin-bottom:2px}
+.chips-row{display:flex;gap:4px;align-items:center}
+.chip{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.58rem;cursor:pointer;border:3px dashed rgba(255,255,255,0.3);box-shadow:0 3px 7px rgba(0,0,0,0.5);transition:all 0.15s;flex-shrink:0}
+.chip:active{transform:scale(0.92)}
+.chip.sel{transform:translateY(-3px) scale(1.1);box-shadow:0 0 0 2px #e8c030,0 5px 12px rgba(0,0,0,0.5)}
 .c1{background:#e8e0d0;color:#222;border-color:#bbb}
 .c5{background:#b82828;color:#fff;border-color:#801818}
+.c10{background:#18187a;color:#fff;border-color:#101050}
 .c25{background:#1a6020;color:#fff;border-color:#103c14}
-.c100{background:#18187a;color:#fff;border-color:#101060}
-.c500{background:#6a2070;color:#fff;border-color:#4a1850}
-.btn{width:100%;padding:13px;border:none;border-radius:6px;font-family:'Oswald',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.15s}
-.btn-roll{background:linear-gradient(135deg,#c9a84c,#f0d060);color:#150a00;font-size:1.15rem;box-shadow:0 4px 18px rgba(201,168,76,0.4)}
-.btn-roll:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(201,168,76,0.55)}
-.btn-roll:active{transform:translateY(0)}
-.btn-roll:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.btn-clear{background:rgba(180,40,40,0.2);color:#e05050;border:1px solid #7a1818;margin-top:7px}
-.btn-clear:hover{background:rgba(180,40,40,0.35)}
-.btn-new{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid var(--gold-dim);margin-top:7px}
-.btn-new:hover{background:rgba(201,168,76,0.22)}
-.game-log{background:rgba(0,0,0,0.5);border:1px solid var(--gold-dim);border-radius:8px;padding:12px;flex:1;max-height:280px;overflow-y:auto}
-.le{padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:#666;line-height:1.4}
-.le:first-child{color:#999}
-.le-win{color:#4ecb6b!important}.le-lose{color:#e05050!important}.le-roll{color:#7aadff!important}.le-info{color:var(--gold)!important}
-.total-bets{text-align:center;font-size:0.88rem;color:var(--gold);padding:6px}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:rgba(0,0,0,0.3)}
-::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px}
+.c50{background:#7a2080;color:#fff;border-color:#501860}
+.btns{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.btn{padding:5px 8px;border:1px solid #333;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.08em;cursor:pointer;background:#111;color:#666;transition:all 0.12s;text-transform:uppercase;white-space:nowrap}
+.btn:active{transform:scale(0.95)}
+.btn-canc{color:#e05050;border-color:#5a1818}
+.btn-new{color:#c9a84c;border-color:#3a2800}
+.btn-roll2{color:#e8c030;border-color:#3a2800;background:#0a0800}
+
+/* LEARN BUTTON */
+.learn-btn{position:fixed;bottom:calc(6px + env(safe-area-inset-bottom));right:6px;width:30px;height:30px;border-radius:50%;background:#1a2060;border:1px solid #c9a84c;color:#c9a84c;font-size:0.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 3px 10px rgba(0,0,0,0.6);font-weight:700}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;display:none;flex-direction:column;overflow:hidden}
+.modal-overlay.open{display:flex}
+.modal-head{background:#0a0400;border-bottom:2px solid #c9a84c;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;padding-top:calc(10px + env(safe-area-inset-top));flex-shrink:0}
+.modal-head h2{font-size:1rem;color:#c9a84c;letter-spacing:0.1em}
+.modal-close{background:none;border:1px solid #444;color:#aaa;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.learn-nav{display:flex;overflow-x:auto;background:#070300;border-bottom:1px solid #2a1800;flex-shrink:0;scrollbar-width:none}
+.learn-nav::-webkit-scrollbar{display:none}
+.lb{padding:7px 12px;background:transparent;color:#555;border:none;border-bottom:2px solid transparent;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;font-weight:600;letter-spacing:0.05em;cursor:pointer;white-space:nowrap;text-transform:uppercase}
+.lb.active{color:#c9a84c;border-bottom-color:#c9a84c;background:#0e0800}
+.learn-body{flex:1;overflow-y:auto;padding:14px;background:#0a0400}
+.ls{display:none}.ls.active{display:block}
+.ls h3{font-size:0.95rem;color:#c9a84c;margin:14px 0 7px;letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid #2a1800;padding-bottom:3px}
+.ls p{font-size:0.84rem;line-height:1.7;color:#a09080;font-weight:300;margin-bottom:8px}
+.ls ul{list-style:none;margin-bottom:10px}
+.ls li{font-size:0.82rem;color:#a09080;padding:4px 0 4px 12px;position:relative;border-bottom:1px solid #140c00;line-height:1.5}
+.ls li::before{content:'▸';position:absolute;left:0;color:#c9a84c}
+.bc{background:#0e0800;border:1px solid #2a1800;border-radius:5px;padding:10px;margin:6px 0;display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#a09080}
+.bch{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.bn{font-size:0.95rem;font-weight:700;color:#e8c030}
+.eh{font-size:0.6rem;padding:2px 7px;border-radius:9px;font-weight:700}
+.eg{background:#0e3010;color:#40d060}.eo{background:#302800;color:#d0a020}.eb{background:#300808;color:#d04040}
+.tip{background:#041808;border-left:3px solid #40d060;border-radius:3px;padding:9px 11px;margin:9px 0}
+.tip .tt{font-size:0.65rem;font-weight:700;color:#40d060;margin-bottom:3px;letter-spacing:0.06em}
+.tip p{margin:0;font-size:0.8rem;color:#809878}
+.warn{background:#180404;border-left:3px solid #d04040;border-radius:3px;padding:9px 11px;margin:9px 0}
+.warn .tt{font-size:0.65rem;font-weight:700;color:#d04040;margin-bottom:3px}
+.warn p{margin:0;font-size:0.8rem;color:#987878}
 
 /* TOAST */
-.toast{position:fixed;top:76px;left:50%;transform:translateX(-50%) translateY(-16px);background:rgba(0,0,0,0.92);border:1px solid var(--gold);border-radius:8px;padding:13px 28px;font-size:1.05rem;font-weight:700;letter-spacing:0.08em;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;text-align:center;min-width:260px}
+.toast{position:fixed;top:calc(76px + env(safe-area-inset-top));left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,0.95);border:1px solid #555;border-radius:7px;padding:8px 16px;font-size:0.84rem;font-weight:700;letter-spacing:0.05em;opacity:0;transition:all 0.25s;pointer-events:none;z-index:500;white-space:nowrap;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.t-win{border-color:#4ecb6b!important;color:#4ecb6b!important}
-.t-lose{border-color:#e05050!important;color:#e05050!important}
-.t-info{border-color:var(--gold)!important;color:var(--gold-light)!important}
+.t-win{border-color:#40d060!important;color:#40d060!important}
+.t-lose{border-color:#e04040!important;color:#e04040!important}
+.t-info{border-color:#c9a84c!important;color:#e8c030!important}
 
-/* ====== LEARN PANEL ====== */
-.learn-nav{display:flex;flex-wrap:wrap;gap:8px;padding:18px 22px;background:var(--felt-dark);border-bottom:1px solid var(--gold-dim)}
-.lb{padding:8px 18px;border:1px solid var(--gold-dim);border-radius:20px;background:transparent;color:var(--cream);font-family:'Oswald',sans-serif;font-size:0.83rem;letter-spacing:0.06em;cursor:pointer;transition:all 0.18s}
-.lb.active,.lb:hover{background:var(--gold-dim);color:var(--cream);border-color:var(--gold)}
-.learn-content{padding:30px 32px}
-.ls{display:none}.ls.active{display:block}
-.ls h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--gold-light);margin-bottom:18px;border-bottom:1px solid var(--gold-dim);padding-bottom:12px}
-.ls h3{font-size:1.05rem;font-weight:700;color:var(--gold);margin:22px 0 8px;letter-spacing:0.08em;text-transform:uppercase}
-.ls p{line-height:1.8;margin-bottom:12px;color:#cdc0a0;font-weight:300;font-size:0.97rem}
-.ls ul{list-style:none;margin:8px 0 14px}
-.ls ul li{padding:7px 0 7px 18px;position:relative;color:#cdc0a0;font-weight:300;line-height:1.6;border-bottom:1px solid rgba(201,168,76,0.08)}
-.ls ul li::before{content:'▸';position:absolute;left:0;color:var(--gold)}
-.bc{background:rgba(0,0,0,0.32);border:1px solid var(--gold-dim);border-radius:8px;padding:14px 18px;margin:10px 0}
-.bch{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
-.bn{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light)}
-.he{font-size:0.8rem;padding:3px 10px;border-radius:12px;font-weight:700}
-.he-gr{background:#143d14;color:#4ecb6b}.he-gd{background:#253c10;color:#8de860}.he-ok{background:#3c3010;color:#e8c840}.he-bd{background:#3c1010;color:#e84040}
-.bp{display:inline-block;background:rgba(201,168,76,0.14);border:1px solid var(--gold-dim);border-radius:3px;padding:2px 8px;font-size:0.82rem;color:var(--gold);margin-right:6px}
-.tip-box{background:rgba(78,203,107,0.07);border:1px solid #1e6030;border-left:4px solid #4ecb6b;border-radius:4px;padding:14px 18px;margin:16px 0}
-.tip-box .tt{color:#4ecb6b;font-weight:700;margin-bottom:6px;font-size:0.85rem;letter-spacing:0.06em;text-transform:uppercase}
-.warn-box{background:rgba(180,40,40,0.07);border:1px solid #7a1818;border-left:4px solid #c03030;border-radius:4px;padding:14px 18px;margin:16px 0}
-.warn-box .tt{color:#e05050}
-.flow{background:rgba(0,0,0,0.4);border:1px solid var(--gold-dim);border-radius:10px;padding:22px;margin:18px 0;text-align:center}
-.fr{display:flex;justify-content:center;align-items:center;gap:14px;margin:7px 0;flex-wrap:wrap}
-.fb{padding:9px 16px;border-radius:6px;font-size:0.85rem;font-weight:700;min-width:110px;text-align:center;line-height:1.4}
-.fb-g{background:#143d14;border:1px solid #1e6030;color:#4ecb6b}
-.fb-r{background:#3c1010;border:1px solid #7a1818;color:#e05050}
-.fb-b{background:#101840;border:1px solid #182878;color:#60a0f0}
-.fb-go{background:rgba(201,168,76,0.18);border:1px solid var(--gold-dim);color:var(--gold-light)}
-.fa{color:var(--gold);font-size:1.2rem}
-
-@media(max-width:820px){.game-layout{grid-template-columns:1fr}.right-panel{display:grid;grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.right-panel{display:flex}.tabs{padding:10px 10px 0}.logo{font-size:1.4rem}}
+/* INSTALL BANNER */
+#ib{display:none;position:fixed;top:calc(72px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:#1c0c00;border:1px solid #c9a84c;border-radius:9px;padding:10px 14px;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,0.8);max-width:300px;width:calc(100% - 20px)}
+#ib.show{display:flex;align-items:center;gap:9px}
+#ib .ibt{flex:1;font-size:0.74rem;color:#f0e6c8;line-height:1.4}
+#ib .ibt strong{color:#e8c96a;display:block;margin-bottom:2px}
+#ib .ibc{background:none;border:none;color:#777;font-size:0.95rem;cursor:pointer;flex-shrink:0}
 </style>
 </head>
 <body>
-<div class="toast" id="toast"></div>
 
-<header>
-  <div class="logo">♦ CRAPS ROYALE ♦</div>
-  <div class="balance-display">BALANCE: $<span class="balance-amt" id="balAmt">500</span></div>
-</header>
+<div id="toast" class="toast"></div>
+<div id="ib"><div class="ibt"><strong>Add to Home Screen</strong>Tap Share → "Add to Home Screen"!</div><button class="ibc" id="ibc">✕</button></div>
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('play',this)">🎲 Play</button>
-  <button class="tab" onclick="switchTab('learn',this)">📚 Learn to Play</button>
+<!-- ROLL HISTORY -->
+<div class="rh-bar">
+  <div class="rh-label"><span class="rh-new">NEW</span>ROLL HISTORY</div>
+  <div class="rh-track" id="rhTrack"></div>
 </div>
 
-<div class="content">
-  <!-- ========= PLAY PANEL ========= -->
-  <div class="panel active" id="panel-play">
-    <div class="game-panel">
-      <div class="game-status">
-        <div>
-          <div class="status-phase phase-co" id="phaseDisp">COME-OUT ROLL</div>
-          <div class="phase-hint" id="phaseHint">Place your Pass Line bet and roll!</div>
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-grp"><span class="stat-lbl">WIN</span><span class="stat-val" id="sWin">0.00</span></div>
+  <div class="sdiv"></div>
+  <div class="stat-grp"><span class="stat-lbl">BET</span><span class="stat-val" id="sBet">0.00</span></div>
+  <div class="sdiv"></div>
+  <div class="stat-grp stat-credit"><span class="stat-lbl">CREDIT</span><span class="stat-val" id="sCred">500</span></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="table-wrap">
+    <div class="table">
+
+      <!-- NUMBERS -->
+      <div class="num-section tb" style="flex:0 0 auto">
+        <div class="dc-cell" id="bz-dontCome" onclick="placeBet('dontCome')">
+          <div class="dc-title">Don't<br>COME,<br>Bar</div>
+          <div class="num-chips" id="cs-dontCome"></div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:0.82rem;color:#555">POINT</span>
-          <div class="point-puck puck-off" id="ptPuck">OFF</div>
+        <div class="nums-grid">
+          <div class="num-col" id="nc-4" onclick="placeBet('place4')"><div class="lay-lbl">LAY</div><div class="num-val">4</div><div class="num-puck puck-off" id="pk-4">OFF</div><div class="buy-lbl">BUY·9:5</div><div class="num-chips" id="cs-place4"></div></div>
+          <div class="num-col" id="nc-5" onclick="placeBet('place5')"><div class="lay-lbl">LAY</div><div class="num-val">5</div><div class="num-puck puck-off" id="pk-5">OFF</div><div class="buy-lbl">BUY·7:5</div><div class="num-chips" id="cs-place5"></div></div>
+          <div class="num-col" id="nc-6" onclick="placeBet('place6')"><div class="lay-lbl">LAY</div><div class="num-val">SIX</div><div class="num-puck puck-off" id="pk-6">OFF</div><div class="buy-lbl">BUY·7:6</div><div class="num-chips" id="cs-place6"></div></div>
+          <div class="num-col" id="nc-8" onclick="placeBet('place8')"><div class="lay-lbl">LAY</div><div class="num-val">8</div><div class="num-puck puck-off" id="pk-8">OFF</div><div class="buy-lbl">BUY·7:6</div><div class="num-chips" id="cs-place8"></div></div>
+          <div class="num-col" id="nc-9" onclick="placeBet('place9')"><div class="lay-lbl">LAY</div><div class="num-val">NINE</div><div class="num-puck puck-off" id="pk-9">OFF</div><div class="buy-lbl">BUY·7:5</div><div class="num-chips" id="cs-place9"></div></div>
+          <div class="num-col" id="nc-10" onclick="placeBet('place10')"><div class="lay-lbl">LAY</div><div class="num-val">10</div><div class="num-puck puck-off" id="pk-10">OFF</div><div class="buy-lbl">BUY·9:5</div><div class="num-chips" id="cs-place10"></div></div>
         </div>
       </div>
 
-      <div class="game-layout">
-        <!-- TABLE -->
-        <div>
-          <div class="craps-table">
-            <!-- Row 1: Don't Pass / Don't Come -->
-            <div class="t-row">
-              <div class="bz dont-bg" id="bz-dontPass" onclick="placeBet('dontPass')">
-                <div class="zl">Don't Pass Bar</div>
-                <div class="zp">Win on 2,3 · Push 12 · 1:1</div>
-                <div class="chip-stack" id="cs-dontPass"></div>
-              </div>
-              <div class="bz dont-bg bz-off" id="bz-dontCome" onclick="placeBet('dontCome')" style="flex:0.55">
-                <div class="zl">Don't Come</div>
-                <div class="zp">1:1</div>
-                <div class="chip-stack" id="cs-dontCome"></div>
-              </div>
-            </div>
-            <!-- Row 2: Dice area -->
-            <div class="dice-area">
-              <div class="die" id="die1"></div>
-              <div class="dice-mid">
-                <div class="dice-total" id="diceTotal">—</div>
-                <div class="dice-msg dm-n" id="diceMsg">Place bets &amp; roll</div>
-              </div>
-              <div class="die" id="die2"></div>
-            </div>
-            <!-- Row 3: Pass Line / Come -->
-            <div class="t-row">
-              <div class="bz" id="bz-passLine" onclick="placeBet('passLine')">
-                <div class="zl">Pass Line</div>
-                <div class="zp">Win 7/11 · Lose 2/3/12 · 1:1 ⭐</div>
-                <div class="chip-stack" id="cs-passLine"></div>
-              </div>
-              <div class="bz bz-off" id="bz-come" onclick="placeBet('come')" style="flex:0.55">
-                <div class="zl">Come</div>
-                <div class="zp">1:1</div>
-                <div class="chip-stack" id="cs-come"></div>
-              </div>
-            </div>
-            <!-- Row 4: Place numbers -->
-            <div class="t-row">
-              <div class="place-row" style="flex:1">
-                <div class="pn" id="bz-place4" onclick="placeBet('place4')">
-                  <div class="pn-num">4</div>
-                  <div class="pn-label">Place</div>
-                  <div class="pn-pay">9:5</div>
-                  <div class="chip-stack" id="cs-place4"></div>
-                </div>
-                <div class="pn" id="bz-place5" onclick="placeBet('place5')">
-                  <div class="pn-num">5</div>
-                  <div class="pn-label">Place</div>
-                  <div class="pn-pay">7:5</div>
-                  <div class="chip-stack" id="cs-place5"></div>
-                </div>
-                <div class="pn" id="bz-place6" onclick="placeBet('place6')">
-                  <div class="pn-num">6</div>
-                  <div class="pn-label">Place</div>
-                  <div class="pn-pay">7:6</div>
-                  <div class="chip-stack" id="cs-place6"></div>
-                </div>
-                <div class="pn" id="bz-place8" onclick="placeBet('place8')">
-                  <div class="pn-num">8</div>
-                  <div class="pn-label">Place</div>
-                  <div class="pn-pay">7:6</div>
-                  <div class="chip-stack" id="cs-place8"></div>
-                </div>
-                <div class="pn" id="bz-place9" onclick="placeBet('place9')">
-                  <div class="pn-num">9</div>
-                  <div class="pn-label">Place</div>
-                  <div class="pn-pay">7:5</div>
-                  <div class="chip-stack" id="cs-place9"></div>
-                </div>
-                <div class="pn" id="bz-place10" onclick="placeBet('place10')">
-                  <div class="pn-num">10</div>
-                  <div class="pn-label">Place</div>
-                  <div class="pn-pay">9:5</div>
-                  <div class="chip-stack" id="cs-place10"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Row 5: Field / Prop bets -->
-            <div class="t-row">
-              <div class="bz" id="bz-field" onclick="placeBet('field')">
-                <div class="zl">Field</div>
-                <div class="zp">2,3,4,9,10,11,12 win · 2&amp;12=2:1</div>
-                <div class="chip-stack" id="cs-field"></div>
-              </div>
-              <div class="bz" id="bz-any7" onclick="placeBet('any7')" style="flex:0.42">
-                <div class="zl">Any 7</div>
-                <div class="zp">4:1</div>
-                <div class="chip-stack" id="cs-any7"></div>
-              </div>
-              <div class="bz" id="bz-anycraps" onclick="placeBet('anycraps')" style="flex:0.52">
-                <div class="zl">Any Craps</div>
-                <div class="zp">7:1</div>
-                <div class="chip-stack" id="cs-anycraps"></div>
-              </div>
-            </div>
-          </div>
-          <div class="total-bets" id="totalBets">Total wagered: $0</div>
-        </div>
+      <!-- COME -->
+      <div class="come-zone tb" id="bz-come" onclick="placeBet('come')" style="flex:1;min-height:36px">
+        <span class="come-title">COME</span>
+        <div class="come-chips" id="cs-come"></div>
+      </div>
 
-        <!-- RIGHT PANEL -->
-        <div class="right-panel">
-          <div class="rp-card">
-            <div class="sec-title">Select Chip</div>
-            <div class="chips-row">
-              <div class="chip c1" id="chip-1" onclick="selChip(1)">$1</div>
-              <div class="chip c5 sel" id="chip-5" onclick="selChip(5)">$5</div>
-              <div class="chip c25" id="chip-25" onclick="selChip(25)">$25</div>
-              <div class="chip c100" id="chip-100" onclick="selChip(100)">$100</div>
-            </div>
-          </div>
-          <div class="rp-card">
-            <div class="sec-title">Actions</div>
-            <button class="btn btn-roll" id="rollBtn" onclick="rollDice()">🎲 ROLL DICE</button>
-            <button class="btn btn-clear" onclick="clearBets()">✕ Clear Bets</button>
-            <button class="btn btn-new" onclick="newGame()">↺ New Game ($500)</button>
-          </div>
-          <div class="game-log" id="gameLog">
-            <div class="le le-info">Welcome to Craps Royale! 🎲</div>
-            <div class="le">Select chips, click the table to bet, then roll.</div>
-            <div class="le">Tip: Start with Pass Line — it's the best bet!</div>
-            <div class="le">See the Learn tab for full rules &amp; strategy.</div>
-          </div>
+      <!-- FIELD -->
+      <div class="field-zone tb" id="bz-field" onclick="placeBet('field')" style="height:34px">
+        <div class="f-pays">2 PAYS<br>DOUBLE</div>
+        <div><div class="f-nums">3 · 4 · 9 · 10 · 11</div><div class="f-lbl">FIELD</div></div>
+        <div class="f-pays">12 PAYS<br>DOUBLE</div>
+        <div class="field-chips" id="cs-field"></div>
+      </div>
+
+      <!-- DON'T PASS -->
+      <div class="dp-zone tb" id="bz-dontPass" onclick="placeBet('dontPass')" style="height:26px">
+        <div class="dp-title">Don't Pass, Bar</div>
+        <div class="dp-dice"><div class="dp-die"></div><div class="dp-die"></div><div class="dp-die"></div></div>
+        <div class="dp-chips" id="cs-dontPass"></div>
+      </div>
+
+      <!-- PASS LINE -->
+      <div class="pl-zone tbt" id="bz-passLine" onclick="placeBet('passLine')" style="flex:0 0 46px">
+        <span class="pl-title">PASS LINE</span>
+        <div class="pl-chips" id="cs-passLine"></div>
+      </div>
+
+      <!-- ODDS -->
+      <div class="odds-zone" id="bz-odds" onclick="placeBet('odds')" style="height:24px">
+        <span class="odds-title">ODDS</span>
+        <span class="odds-info" id="oddsInfo">available after point is set</span>
+        <div class="odds-chips" id="cs-odds"></div>
+      </div>
+
+    </div><!-- /table -->
+
+    <!-- WIN CONDITIONS -->
+    <div class="win-cond">
+      <div class="wc-lbl">WIN<br>COND.</div>
+      <div class="wc-nums" id="wcNums"></div>
+    </div>
+
+    <!-- BOTTOM ROW 1 -->
+    <div class="bot-row1">
+      <div class="dice-area">
+        <div class="die" id="die1"></div>
+        <div class="dice-total" id="diceTotal">—</div>
+        <div class="die" id="die2"></div>
+      </div>
+      <div class="phase-strip">
+        <div class="phase-title" id="phaseTitle">COME-OUT ROLL</div>
+        <div class="phase-hint" id="phaseHint">Bet Pass Line &amp; roll!</div>
+        <div class="total-bet" id="totalBet">Wagered: $0</div>
+      </div>
+      <button class="btn-roll" id="rollBtn" onclick="rollDice()">🎲 ROLL</button>
+    </div>
+
+    <!-- BOTTOM ROW 2 -->
+    <div class="bot-row2">
+      <div style="flex-shrink:0">
+        <div class="chip-sel-lbl">SELECTED</div>
+        <div class="chips-row">
+          <div class="chip c1" id="chip-1" onclick="selChip(1)">$1</div>
+          <div class="chip c5 sel" id="chip-5" onclick="selChip(5)">$5</div>
+          <div class="chip c10" id="chip-10" onclick="selChip(10)">$10</div>
+          <div class="chip c25" id="chip-25" onclick="selChip(25)">$25</div>
+          <div class="chip c50" id="chip-50" onclick="selChip(50)">$50</div>
         </div>
+      </div>
+      <div style="flex:1;display:flex;gap:3px;margin-left:6px;flex-wrap:wrap;align-content:flex-start">
+        <button class="btn btn-canc" onclick="clearBets()" style="flex:1">CANCEL</button>
+        <button class="btn" onclick="allOff()" style="flex:1">ALL OFF</button>
+        <button class="btn btn-new" onclick="newGame()" style="flex:1">NEW GAME</button>
+        <button class="btn btn-roll2" id="rollBtn2" onclick="rollDice()" style="flex:1">ROLL ▶</button>
       </div>
     </div>
+
+  </div><!-- /table-wrap -->
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="rp-title">HARDWAYS</div>
+    <div class="hw-grid">
+      <div class="hw-cell" id="bz-hard4" onclick="placeBet('hard4')">
+        <div style="display:flex;gap:1px">
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.6" fill="#fff"/><circle cx="9.5" cy="9.5" r="1.6" fill="#fff"/></svg>
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.6" fill="#fff"/><circle cx="9.5" cy="9.5" r="1.6" fill="#fff"/></svg>
+        </div>
+        <div class="hw-pay">7 to 1</div><div class="hw-name">HARD 4</div>
+        <div class="hw-chips" id="cs-hard4"></div>
+      </div>
+      <div class="hw-cell" id="bz-hard10" onclick="placeBet('hard10')">
+        <div style="display:flex;gap:1px">
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="3.5" cy="6.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="6.5" r="1.3" fill="#fff"/><circle cx="3.5" cy="9.5" r="1.3" fill="#fff"/></svg>
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="3.5" cy="6.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="6.5" r="1.3" fill="#fff"/><circle cx="3.5" cy="9.5" r="1.3" fill="#fff"/></svg>
+        </div>
+        <div class="hw-pay">7 to 1</div><div class="hw-name">HARD 10</div>
+        <div class="hw-chips" id="cs-hard10"></div>
+      </div>
+      <div class="hw-cell" id="bz-hard6" onclick="placeBet('hard6')">
+        <div style="display:flex;gap:1px">
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.4" fill="#fff"/><circle cx="6.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="9.5" cy="9.5" r="1.4" fill="#fff"/></svg>
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.4" fill="#fff"/><circle cx="6.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="9.5" cy="9.5" r="1.4" fill="#fff"/></svg>
+        </div>
+        <div class="hw-pay">9 to 1</div><div class="hw-name">HARD 6</div>
+        <div class="hw-chips" id="cs-hard6"></div>
+      </div>
+      <div class="hw-cell" id="bz-hard8" onclick="placeBet('hard8')">
+        <div style="display:flex;gap:1px">
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="3.5" cy="9.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="9.5" r="1.3" fill="#fff"/></svg>
+          <svg width="13" height="13" viewBox="0 0 13 13"><rect width="13" height="13" rx="2" fill="#e03020"/><circle cx="3.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="3.5" r="1.3" fill="#fff"/><circle cx="3.5" cy="9.5" r="1.3" fill="#fff"/><circle cx="9.5" cy="9.5" r="1.3" fill="#fff"/></svg>
+        </div>
+        <div class="hw-pay">9 to 1</div><div class="hw-name">HARD 8</div>
+        <div class="hw-chips" id="cs-hard8"></div>
+      </div>
+    </div>
+    <div class="rp-title" style="margin-top:1px">ONE ROLL BETS</div>
+    <div class="or-cells-wrap">
+      <div class="or-cell" id="bz-any7" onclick="placeBet('any7')"><div class="or-pay">4 to 1</div><div class="or-name">ANY SEVEN</div><div class="or-chips" id="cs-any7"></div></div>
+      <div class="or-cell" id="bz-horn" onclick="placeBet('horn')"><div class="horn-lbl">HORN</div><div class="or-name">2·3·11·12</div><div class="or-chips" id="cs-horn"></div></div>
+      <div class="or-cell" id="bz-anycraps" onclick="placeBet('anycraps')"><div class="or-pay">7 to 1</div><div class="or-name">ANY CRAPS</div><div class="or-chips" id="cs-anycraps"></div></div>
+      <div class="or-cell" id="bz-ce" onclick="placeBet('ce')" style="border-bottom:none"><div class="or-pay">C &amp; E</div><div class="or-name">CRAPS/ELEVEN</div><div class="or-chips" id="cs-ce"></div></div>
+    </div>
+  </div><!-- /right-panel -->
+
+</div><!-- /main -->
+
+<button class="learn-btn" onclick="openLearn()">?</button>
+
+<!-- LEARN MODAL -->
+<div class="modal-overlay" id="learnModal">
+  <div class="modal-head"><h2>📚 LEARN TO PLAY</h2><button class="modal-close" onclick="closeLearn()">✕</button></div>
+  <div class="learn-nav">
+    <button class="lb active" onclick="showSec('basics',this)">Basics</button>
+    <button class="lb" onclick="showSec('bets',this)">Bets</button>
+    <button class="lb" onclick="showSec('best',this)">Best Bets</button>
+    <button class="lb" onclick="showSec('strat',this)">Strategy</button>
+    <button class="lb" onclick="showSec('etiq',this)">Etiquette</button>
   </div>
-
-  <!-- ========= LEARN PANEL ========= -->
-  <div class="panel" id="panel-learn">
-    <div class="learn-nav">
-      <button class="lb active" onclick="showSection('basics',this)">The Basics</button>
-      <button class="lb" onclick="showSection('bets',this)">All the Bets</button>
-      <button class="lb" onclick="showSection('bestbets',this)">Best Bets</button>
-      <button class="lb" onclick="showSection('strategy',this)">Strategy</button>
-      <button class="lb" onclick="showSection('etiquette',this)">Casino Etiquette</button>
+  <div class="learn-body">
+    <div class="ls active" id="ls-basics">
+      <h3>How Craps Works</h3>
+      <p>Craps is built around a two-phase system. Start with the Pass Line bet — once you get that, everything else makes sense.</p>
+      <h3>Phase 1 — Come-Out Roll</h3>
+      <ul>
+        <li><strong>Roll 7 or 11</strong> → Natural! Pass Line wins immediately 🎉</li>
+        <li><strong>Roll 2, 3, or 12</strong> → Craps! Pass Line loses</li>
+        <li><strong>Roll 4,5,6,8,9, or 10</strong> → That number becomes the POINT. The puck on the table flips to ON.</li>
+      </ul>
+      <h3>Phase 2 — Point Phase</h3>
+      <ul>
+        <li><strong>Roll the point again</strong> → Pass Line wins! New come-out starts.</li>
+        <li><strong>Roll a 7</strong> → "Seven out." Pass Line loses. Dice pass to new shooter.</li>
+        <li>All other numbers → keep rolling, no Pass Line result yet.</li>
+      </ul>
+      <div class="tip"><div class="tt">💡 Vegas Tip</div><p>The whole table usually bets together. When the shooter hits the point, everyone wins together — that energy is why craps is the most exciting game on the floor!</p></div>
     </div>
-    <div class="learn-content">
-
-      <!-- BASICS -->
-      <div class="ls active" id="ls-basics">
-        <h2>How Craps Works</h2>
-        <p>Craps looks chaotic at first, but it's actually built around a simple two-phase structure. Once you understand that, everything else clicks into place.</p>
-        <div class="flow">
-          <div class="fr"><div class="fb fb-go">Come-Out Roll</div></div>
-          <div class="fr"><div class="fa">▼</div></div>
-          <div class="fr">
-            <div class="fb fb-g">Roll 7 or 11<br><small>Natural → PASS WINS 🎉</small></div>
-            <div class="fb fb-r">Roll 2, 3, or 12<br><small>Craps → PASS LOSES</small></div>
-            <div class="fb fb-b">Roll 4,5,6,8,9,10<br><small>Point Is Set →</small></div>
-          </div>
-          <div class="fr"><div class="fa" style="opacity:0">▼</div><div class="fa" style="opacity:0">▼</div><div class="fa">▼</div></div>
-          <div class="fr">
-            <div style="flex:1;max-width:120px"></div>
-            <div style="flex:1;max-width:120px"></div>
-            <div class="fb fb-go">Point Phase<br><small>Keep rolling…</small></div>
-          </div>
-          <div class="fr"><div class="fa" style="opacity:0">▼</div><div class="fa">▼</div></div>
-          <div class="fr">
-            <div class="fb fb-g">Hit the Point<br><small>PASS WINS 🎉</small></div>
-            <div class="fb fb-r">Roll a 7<br><small>Seven Out → PASS LOSES</small></div>
-          </div>
-        </div>
-        <h3>Phase 1: The Come-Out Roll</h3>
-        <p>Every round starts with a come-out roll. If you have a <strong>Pass Line</strong> bet (the most popular bet at the table):</p>
-        <ul>
-          <li><strong>Roll 7 or 11</strong> — Win immediately! This is a "Natural."</li>
-          <li><strong>Roll 2, 3, or 12</strong> — Lose immediately. This is "Craps."</li>
-          <li><strong>Any other number</strong> (4, 5, 6, 8, 9, or 10) — That becomes <em>the point</em>. The puck flips to ON and the game moves to Phase 2.</li>
-        </ul>
-        <h3>Phase 2: The Point Phase</h3>
-        <p>Once the point is set, the shooter keeps rolling until one of two things happens:</p>
-        <ul>
-          <li><strong>The point number is rolled again</strong> — Pass Line wins! Round resets to a new come-out roll.</li>
-          <li><strong>A 7 is rolled</strong> — "Seven out." Pass Line loses. Dice pass to a new shooter.</li>
-        </ul>
-        <div class="tip-box">
-          <div class="tt">💡 Vegas Tip</div>
-          <p style="margin:0">In a live casino, the whole table usually bets with the shooter. When the shooter hits the point, everyone wins together — that communal energy is what makes craps the most exciting table game in the casino!</p>
-        </div>
-        <h3>The Table Layout</h3>
-        <p>The craps table is divided into zones for different bets. The most important ones are at the bottom (Pass Line) and the numbered boxes in the middle. Don't let the busy layout intimidate you — just focus on the Pass Line to start.</p>
-      </div>
-
-      <!-- ALL BETS -->
-      <div class="ls" id="ls-bets">
-        <h2>All the Bets Explained</h2>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Pass Line</div><div class="he he-gr">1.41% House Edge ★★★</div></div>
-          <p style="margin-bottom:8px">The most fundamental craps bet. You're betting with the shooter.</p>
-          <ul>
-            <li>Come-out roll: Win on 7 or 11, lose on 2/3/12</li>
-            <li>Point phase: Win if the point rolls before a 7</li>
-            <li>Payout: <span class="bp">1:1</span></li>
-          </ul>
-        </div>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Don't Pass Bar</div><div class="he he-gr">1.36% House Edge ★★★</div></div>
-          <p style="margin-bottom:8px">Opposite of Pass Line — you're betting against the shooter. Lower house edge, but at a real casino, don't celebrate when the table loses!</p>
-          <ul>
-            <li>Come-out roll: Win on 2 or 3, lose on 7/11, push (tie) on 12</li>
-            <li>Point phase: Win if a 7 rolls before the point</li>
-            <li>Payout: <span class="bp">1:1</span></li>
-          </ul>
-        </div>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Come Bet</div><div class="he he-gr">1.41% House Edge ★★★</div></div>
-          <p style="margin-bottom:8px">Exactly like the Pass Line, but placed after a point is established. The next roll acts as your personal come-out roll. Available only during the point phase.</p>
-          <ul>
-            <li>Next roll: Win on 7/11, lose on 2/3/12</li>
-            <li>Any other number: that becomes your come-point</li>
-            <li>Payout: <span class="bp">1:1</span></li>
-          </ul>
-        </div>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Place Bets (4, 5, 6, 8, 9, 10)</div><div class="he he-gd">1.5%–6.7% Edge ★★☆</div></div>
-          <p style="margin-bottom:8px">Bet that a specific number will roll before a 7. These stay up until you win or a 7 is rolled. Best placed on 6 and 8.</p>
-          <ul>
-            <li>Place 6 or 8: <span class="bp">7:6</span> — House edge: 1.52%</li>
-            <li>Place 5 or 9: <span class="bp">7:5</span> — House edge: 4.0%</li>
-            <li>Place 4 or 10: <span class="bp">9:5</span> — House edge: 6.67%</li>
-          </ul>
-        </div>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Field Bet</div><div class="he he-ok">5.5% House Edge ★☆☆</div></div>
-          <p style="margin-bottom:8px">A one-roll bet. Win if the next roll is 2, 3, 4, 9, 10, 11, or 12. Lose on 5, 6, 7, or 8.</p>
-          <ul>
-            <li>3, 4, 9, 10, 11: <span class="bp">1:1</span></li>
-            <li>2 or 12: <span class="bp">2:1</span></li>
-            <li>Losing numbers: 5, 6, 7, 8</li>
-          </ul>
-        </div>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Any 7</div><div class="he he-bd">16.7% House Edge ✗✗✗</div></div>
-          <p style="margin-bottom:8px">One-roll bet that the next roll is a 7. High payout but terrible odds.</p>
-          <ul>
-            <li>Payout: <span class="bp">4:1</span> — True odds are 5:1</li>
-          </ul>
-          <div class="warn-box" style="margin:10px 0 0">
-            <div class="tt">⚠️ Sucker Bet</div>
-            <p style="margin:0;font-size:0.9rem;color:#cdc0a0">Over 16% house edge. The casino loves when tourists play this. Avoid it entirely.</p>
-          </div>
-        </div>
-
-        <div class="bc">
-          <div class="bch"><div class="bn">Any Craps</div><div class="he he-bd">11.1% House Edge ✗✗</div></div>
-          <p style="margin-bottom:8px">One-roll bet that the next roll is 2, 3, or 12. Sometimes used to hedge a Pass Line bet on the come-out.</p>
-          <ul>
-            <li>Payout: <span class="bp">7:1</span></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- BEST BETS -->
-      <div class="ls" id="ls-bestbets">
-        <h2>The Best Bets for Beginners</h2>
-        <p>Craps has some of the <em>best</em> and the <em>worst</em> bets in any casino. Knowing the difference is the most valuable thing you can learn before your trip.</p>
-        <div class="tip-box">
-          <div class="tt">🏆 Beginner's Core Strategy</div>
-          <p style="margin:0">Stick to <strong>Pass Line + Place 6 &amp; 8</strong>. These three bets have very low house edges, are simple to manage, and keep you involved in nearly every roll.</p>
-        </div>
-        <h3>Bet Rankings: Best to Worst</h3>
-        <div class="bc"><span style="color:#4ecb6b">★★★</span> <strong style="color:var(--gold-light)">Don't Pass / Don't Come</strong> — 1.36% edge (lowest on the table, but betting against the table is socially awkward)</div>
-        <div class="bc"><span style="color:#4ecb6b">★★★</span> <strong style="color:var(--gold-light)">Pass Line / Come</strong> — 1.41% edge (the classic, most popular bet. Start here.)</div>
-        <div class="bc"><span style="color:#8de860">★★☆</span> <strong style="color:var(--gold-light)">Place 6 or Place 8</strong> — 1.52% edge (great secondary bets once a point is set)</div>
-        <div class="bc"><span style="color:#e8c840">★☆☆</span> <strong style="color:var(--gold-light)">Place 5 or Place 9</strong> — 4.0% edge (acceptable, not ideal)</div>
-        <div class="bc"><span style="color:#e05050">✗✗</span> <strong style="color:#e05050">Field Bet</strong> — 5.5% edge (it looks like a lot of numbers win but the math is against you)</div>
-        <div class="bc"><span style="color:#e05050">✗✗✗</span> <strong style="color:#e05050">Any 7, Hardways, Prop Bets</strong> — 9–16% edge (avoid entirely)</div>
-
-        <h3>Taking Free Odds — The Best Bet in the Casino</h3>
-        <p>After making a Pass Line bet and a point is set, you can make an additional "Free Odds" bet behind your Pass Line chips. This is the <strong>only bet in any casino with zero house edge</strong> — the casino pays true mathematical odds.</p>
-        <ul>
-          <li>Point is 4 or 10: Odds pay <span class="bp">2:1</span></li>
-          <li>Point is 5 or 9: Odds pay <span class="bp">3:2</span></li>
-          <li>Point is 6 or 8: Odds pay <span class="bp">6:5</span></li>
-        </ul>
-        <div class="tip-box">
-          <div class="tt">💡 Pro Tip</div>
-          <p style="margin:0">Most Vegas casinos allow 3x–4x–5x odds (3x on 4/10, 4x on 5/9, 5x on 6/8). Always take the max odds allowed — it's free money in the long run relative to any other bet.</p>
-        </div>
-      </div>
-
-      <!-- STRATEGY -->
-      <div class="ls" id="ls-strategy">
-        <h2>Craps Strategy</h2>
-
-        <h3>Beginner Strategy: "Pass Line + Place 6 &amp; 8"</h3>
-        <ul>
-          <li>Always bet the <strong>Pass Line</strong> before the come-out roll</li>
-          <li>Once a point is set, place $6 on both <strong>6 and 8</strong> (if one of them isn't already the point)</li>
-          <li>When you win on 6 or 8, you can collect the winnings or "press" (add to) the bet</li>
-          <li>You're now covered on three of the six most-rolled numbers</li>
-        </ul>
-
-        <h3>The Math: Why 6 and 8 Are Great</h3>
-        <p>There are 36 possible dice combinations. Here's how often key numbers appear:</p>
-        <ul>
-          <li><strong>7</strong>: 6 ways — most common roll (1+6, 2+5, 3+4, 4+3, 5+2, 6+1)</li>
-          <li><strong>6</strong>: 5 ways — second most common (1+5, 2+4, 3+3, 4+2, 5+1)</li>
-          <li><strong>8</strong>: 5 ways — tied for second (2+6, 3+5, 4+4, 5+3, 6+2)</li>
-          <li><strong>5 &amp; 9</strong>: 4 ways each</li>
-          <li><strong>4 &amp; 10</strong>: 3 ways each — hardest to hit</li>
-        </ul>
-
-        <h3>Bankroll Management</h3>
-        <ul>
-          <li>Set a <strong>hard stop-loss</strong> before you sit down — if you lose it, walk away</li>
-          <li>A reasonable session bankroll for $5 craps: $100–$200</li>
-          <li>Never bet more than 10% of your session bankroll on a single roll</li>
-          <li>If you're up 50% or more, consider pocketing half your profit and playing with the rest</li>
-          <li>Remember: the house always has an edge. Play for fun, not to make money.</li>
-        </ul>
-
-        <div class="warn-box">
-          <div class="tt">⚠️ Gambler's Fallacy</div>
-          <p style="margin:0;color:#cdc0a0">Past rolls have <strong>zero</strong> effect on future rolls. If the table has been "cold" (lots of seven-outs), the next roll still has the exact same odds. There are no "due" numbers. Each roll is completely independent.</p>
-        </div>
-
-        <h3>Volatility &amp; Streaks</h3>
-        <p>Craps is a volatile game. A hot shooter can multiply your stack in minutes. A cold session can wipe you out just as fast. The house edge is low per bet, but the pace of the game means many bets are resolved quickly. Pace yourself, enjoy the social atmosphere, and play within your means.</p>
-      </div>
-
-      <!-- ETIQUETTE -->
-      <div class="ls" id="ls-etiquette">
-        <h2>Casino Craps Etiquette</h2>
-        <p>Craps has more unwritten rules than almost any other casino game. Follow these and you'll fit right in with the regulars.</p>
-        <h3>At the Table</h3>
-        <ul>
-          <li>Buy in <strong>between rolls</strong>, never while the dice are out — place cash on the table and say "Change, please"</li>
-          <li>Keep your hands <strong>out of the table</strong> when the dice are in the air</li>
-          <li>Don't reach across the table — if you can't reach a bet, ask the dealer</li>
-          <li>Pass Line bets are self-service; most other bets go through the dealers</li>
-        </ul>
-        <h3>As the Shooter</h3>
-        <ul>
-          <li>Use <strong>one hand only</strong> to pick up and throw the dice</li>
-          <li>Always hit the <strong>far wall</strong> of the table — both dice must bounce off it</li>
-          <li>Don't take forever choosing dice or shaking them — keep the game moving</li>
-          <li>Never say the word <strong>"seven"</strong> at the table during a point phase — it's considered terrible luck. Say "big red" instead if you must reference it.</li>
-        </ul>
-        <h3>Tipping the Dealers</h3>
-        <ul>
-          <li>Dealers work mostly for tips — it's customary to tip after a good run</li>
-          <li>A fun way to tip: place a chip for the dealers on the Pass Line ("This one's for the crew!")</li>
-          <li>$5–$10 per session is normal for low-to-mid stakes games</li>
-        </ul>
-        <h3>Table Lingo to Know</h3>
-        <ul>
-          <li><strong>"Coming out"</strong> — starting a new round</li>
-          <li><strong>"Seven out"</strong> — a 7 rolled during the point phase, ending the round</li>
-          <li><strong>"Color me up"</strong> — say this when leaving to exchange small chips for larger ones</li>
-          <li><strong>"Press it"</strong> — double a winning bet</li>
-          <li><strong>"Working"</strong> — your bets are active on this roll</li>
-          <li><strong>"Off"</strong> — temporarily disabling your bets for a roll</li>
-        </ul>
-        <div class="tip-box">
-          <div class="tt">🎰 Final Tip</div>
-          <p style="margin:0">Craps dealers genuinely enjoy helping newcomers. If you're nervous, just tell them — most will be happy to guide you through your first few bets. Buy in for a modest amount, start with just the Pass Line, and soak in the energy of the table. It's one of the most fun experiences in Vegas!</p>
-        </div>
-      </div>
-
+    <div class="ls" id="ls-bets">
+      <h3>Pass Line</h3>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Pass Line</span><span class="eh eg">1.41% edge ★★★</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Win on 7/11 come-out. Lose on 2/3/12. In point phase, win if point rolls before 7. Pays 1:1.</p></div></div>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Odds (behind Pass)</span><span class="eh eg">0% edge ★★★★</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">The only 0% edge bet in any casino. After point is set, tap ODDS. Pays 2:1 on 4/10, 3:2 on 5/9, 6:5 on 6/8.</p></div></div>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Don't Pass Bar</span><span class="eh eg">1.36% edge ★★★</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Betting against the shooter. Better odds but you're rooting against the table. Win on 2/3, push on 12, lose on 7/11.</p></div></div>
+      <h3>Place Bets</h3>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Place 6 or 8</span><span class="eh eg">1.52% edge ★★★</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Bet that 6 (or 8) rolls before 7. Stays active. Pays 7:6. Best place bets on the table.</p></div></div>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Place 5 or 9</span><span class="eh eo">4.0% edge ★★☆</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Pays 7:5. Acceptable.</p></div></div>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Place 4 or 10</span><span class="eh eb">6.67% edge ✗</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Pays 9:5. High edge — avoid or buy.</p></div></div>
+      <h3>One-Roll &amp; Prop Bets</h3>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Field</span><span class="eh eo">5.5% edge ★☆</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Wins on 2,3,4,9,10,11,12. Pays 1:1, except 2&amp;12 pay 2:1. Loses on 5,6,7,8.</p></div></div>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Any 7</span><span class="eh eb">16.7% edge ✗✗✗</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Pays 4:1. True odds are 5:1. Worst bet on the table. Avoid.</p></div></div>
+      <div class="bc"><div style="flex:1"><div class="bch"><span class="bn">Hardways</span><span class="eh eb">9–11% edge ✗✗</span></div><p style="margin:0;font-size:0.78rem;color:#a09080">Win if number rolls as doubles (3+3 = Hard 6) before a 7 or easy way. Hard 6/8 pay 9:1, Hard 4/10 pay 7:1.</p></div></div>
+    </div>
+    <div class="ls" id="ls-best">
+      <h3>Best Bets for Beginners</h3>
+      <div class="tip"><div class="tt">🏆 The Move</div><p>Pass Line + Free Odds + Place 6 &amp; 8. Low house edge, covers most rolls, stays exciting all game.</p></div>
+      <div class="bc"><span class="eh eg" style="margin-right:8px">0%</span><strong>Free Odds</strong> — Always take max odds! Zero house edge.</div>
+      <div class="bc"><span class="eh eg" style="margin-right:8px">1.36%</span><strong>Don't Pass</strong></div>
+      <div class="bc"><span class="eh eg" style="margin-right:8px">1.41%</span><strong>Pass Line / Come</strong></div>
+      <div class="bc"><span class="eh eg" style="margin-right:8px">1.52%</span><strong>Place 6 or Place 8</strong></div>
+      <div class="bc"><span class="eh eo" style="margin-right:8px">4.0%</span><strong>Place 5 or 9</strong></div>
+      <div class="bc"><span class="eh eb" style="margin-right:8px">5.5%+</span><strong>Field, Hardways, Props</strong> — avoid or use sparingly</div>
+      <div class="warn"><div class="tt">⚠️ Skip This</div><p>Any 7 has a 16.7% house edge. The casino loves tourists who play it.</p></div>
+    </div>
+    <div class="ls" id="ls-strat">
+      <h3>Step-by-Step Beginner Strategy</h3>
+      <ul>
+        <li>Bet <strong>Pass Line</strong> every come-out</li>
+        <li>After point is set, tap <strong>ODDS</strong> — free odds has 0% house edge</li>
+        <li>Add <strong>Place 6</strong> and <strong>Place 8</strong> if they're not already the point</li>
+        <li>That's it — you're playing with the best odds possible</li>
+      </ul>
+      <h3>The Math — Why 6 and 8?</h3>
+      <ul>
+        <li><strong>7</strong>: 6 ways to roll — most common number</li>
+        <li><strong>6 and 8</strong>: 5 ways each — 2nd most common</li>
+        <li><strong>5 and 9</strong>: 4 ways each</li>
+        <li><strong>4 and 10</strong>: 3 ways each — hardest to hit</li>
+      </ul>
+      <h3>Bankroll Rules</h3>
+      <ul>
+        <li>Set a hard loss limit before you sit down</li>
+        <li>$100–$200 is a solid session for a $5 table</li>
+        <li>If you're up 50%, pocket half and play with profits</li>
+        <li>Never raise bets to chase losses</li>
+      </ul>
+      <div class="warn"><div class="tt">⚠️ Gambler's Fallacy</div><p>Past rolls don't affect future rolls. A cold table doesn't mean a hot streak is due. Every roll is independent.</p></div>
+    </div>
+    <div class="ls" id="ls-etiq">
+      <h3>At the Table</h3>
+      <ul>
+        <li>Buy in <strong>between rolls</strong> — place cash on table, say "Change, please"</li>
+        <li>Keep hands <strong>out of the table</strong> when dice are in the air</li>
+        <li>Pass Line and Field are self-service; other bets go through dealers</li>
+        <li>Have your bet ready — don't hold up the game</li>
+      </ul>
+      <h3>As the Shooter</h3>
+      <ul>
+        <li>Use <strong>one hand only</strong> to throw the dice</li>
+        <li>Both dice must bounce off the <strong>far wall</strong></li>
+        <li>Never say "<strong>seven</strong>" at the table during the point phase — say "big red" if you must reference it</li>
+      </ul>
+      <h3>Tipping &amp; Lingo</h3>
+      <ul>
+        <li>Tip after a good run — dealers work for tips. Bet a chip for them on the Pass Line: "For the dealers!"</li>
+        <li><strong>"Coming out"</strong> — starting a new round</li>
+        <li><strong>"Seven out"</strong> — 7 rolled during point phase, round ends</li>
+        <li><strong>"Color me up"</strong> — exchange small chips for large ones when leaving</li>
+        <li><strong>"Press it"</strong> — double a winning bet</li>
+      </ul>
+      <div class="tip"><div class="tt">🎰 Last Tip</div><p>Tell the dealer you're new — most will guide you. Buy in small, just bet the Pass Line at first, and soak in the atmosphere. Craps is the most social game in Vegas!</p></div>
     </div>
   </div>
 </div>
 
 <script>
-// ===== STATE =====
-var G = {
-  bal: 500,
-  phase: 'co', // 'co' = come-out, 'pt' = point
-  point: null,
-  bets: { passLine:0, dontPass:0, come:0, dontCome:0, field:0, any7:0, anycraps:0,
-          place4:0, place5:0, place6:0, place8:0, place9:0, place10:0 },
-  chip: 5,
-  rolling: false
-};
-
-var CHIP_STYLE = {
-  1:  {bg:'#e8e0d0',color:'#222',border:'#bbb'},
-  5:  {bg:'#b82828',color:'#fff',border:'#801818'},
-  25: {bg:'#1a6020',color:'#fff',border:'#103c14'},
-  100:{bg:'#18187a',color:'#fff',border:'#101060'}
-};
-
-var DOT_POS = {
-  1:[[50,50]],
-  2:[[25,25],[75,75]],
-  3:[[25,25],[50,50],[75,75]],
-  4:[[25,25],[75,25],[25,75],[75,75]],
-  5:[[25,25],[75,25],[50,50],[25,75],[75,75]],
-  6:[[25,25],[75,25],[25,50],[75,50],[25,75],[75,75]]
-};
-
-var BET_NAMES = {
-  passLine:'Pass Line',dontPass:"Don't Pass",come:'Come',dontCome:"Don't Come",
-  field:'Field',any7:'Any 7',anycraps:'Any Craps',
-  place4:'Place 4',place5:'Place 5',place6:'Place 6',
-  place8:'Place 8',place9:'Place 9',place10:'Place 10'
-};
-
-function rand6(){ return Math.floor(Math.random()*6)+1; }
-
-// ===== RENDER DIE =====
-function renderDie(id, val){
-  var el = document.getElementById(id);
-  el.innerHTML = '';
-  (DOT_POS[val]||DOT_POS[1]).forEach(function(p){
-    var d = document.createElement('div');
-    d.className = 'dot';
-    d.style.left = p[0]+'%'; d.style.top = p[1]+'%';
-    d.style.transform = 'translate(-50%,-50%)';
-    el.appendChild(d);
-  });
-}
-
-function initDice(){
-  renderDie('die1',1); renderDie('die2',1);
-}
-
-// ===== TABS =====
-function switchTab(id, btn){
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  btn.classList.add('active');
-  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('panel-'+id).classList.add('active');
-}
-
-function showSection(id, btn){
-  document.querySelectorAll('.lb').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.querySelectorAll('.ls').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById('ls-'+id).classList.add('active');
-}
-
-// ===== TOAST =====
-var toastTimer;
-function toast(msg, type){
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show t-'+(type||'info');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ t.className='toast'; }, 2600);
-}
-
-// ===== LOG =====
-function log(msg, type){
-  var lg = document.getElementById('gameLog');
-  var e = document.createElement('div');
-  e.className = 'le'+(type?' le-'+type:'');
-  e.textContent = msg;
-  lg.insertBefore(e, lg.firstChild);
-  while(lg.children.length > 60) lg.removeChild(lg.lastChild);
-}
-
-// ===== CHIP SELECT =====
-function selChip(v){
-  G.chip = v;
-  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('sel'); });
-  document.getElementById('chip-'+v).classList.add('sel');
-}
-
-// ===== CHIP STACK RENDER =====
-function csHTML(amount){
-  if(amount <= 0) return '';
-  var r = amount, html = '', shown = 0;
-  [100,25,5,1].forEach(function(d){
-    while(r >= d && shown < 6){
-      var s = CHIP_STYLE[d] || CHIP_STYLE[5];
-      html += '<div class="tc" style="background:'+s.bg+';color:'+s.color+';border-color:'+s.border+'">'+
-              (d>=100?'$'+d:'$'+d)+'</div>';
-      r -= d; shown++;
-    }
-  });
-  return html;
-}
-
-function updateChipStacks(){
-  Object.keys(G.bets).forEach(function(k){
-    var el = document.getElementById('cs-'+k);
-    if(el) el.innerHTML = csHTML(G.bets[k]);
-    var bz = document.getElementById('bz-'+k);
-    if(bz) bz.classList.toggle('has-bet', G.bets[k] > 0);
-  });
-}
-
-// ===== PLACE BET =====
+var G={bal:500,phase:'co',point:null,bets:{passLine:0,dontPass:0,come:0,dontCome:0,field:0,any7:0,anycraps:0,horn:0,ce:0,place4:0,place5:0,place6:0,place8:0,place9:0,place10:0,hard4:0,hard6:0,hard8:0,hard10:0,odds:0},chip:5,rolling:false,sessionWin:0,rollHistory:[]};
+var CC={1:'#e8e0d0',5:'#b82828',10:'#18187a',25:'#1a6020',50:'#7a2080'};
+var CT={1:'#222',5:'#fff',10:'#fff',25:'#fff',50:'#fff'};
+var DP={1:[[50,50]],2:[[28,28],[72,72]],3:[[28,28],[50,50],[72,72]],4:[[28,28],[72,28],[28,72],[72,72]],5:[[28,28],[72,28],[50,50],[28,72],[72,72]],6:[[28,25],[72,25],[28,50],[72,50],[28,75],[72,75]]};
+function r6(){return Math.floor(Math.random()*6)+1;}
+function renderDie(id,val){var e=document.getElementById(id);e.innerHTML='';e.style.position='relative';(DP[val]||DP[1]).forEach(function(p){var d=document.createElement('div');d.className='dot';d.style.cssText='position:absolute;width:6px;height:6px;background:#1a1a1a;border-radius:50%;left:'+p[0]+'%;top:'+p[1]+'%;transform:translate(-50%,-50%)';e.appendChild(d);});}
+function initDice(){renderDie('die1',1);renderDie('die2',6);}
+function openLearn(){document.getElementById('learnModal').classList.add('open');}
+function closeLearn(){document.getElementById('learnModal').classList.remove('open');}
+function showSec(id,btn){document.querySelectorAll('.lb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.querySelectorAll('.ls').forEach(function(s){s.classList.remove('active');});document.getElementById('ls-'+id).classList.add('active');}
+var ttmr;
+function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show t-'+(type||'info');clearTimeout(ttmr);ttmr=setTimeout(function(){t.className='toast';},2500);}
+function selChip(v){G.chip=v;document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('sel');});document.getElementById('chip-'+v).classList.add('sel');}
+function chipHTML(amt){if(!amt)return'';var html='',r=amt,shown=0;[50,25,10,5,1].forEach(function(d){while(r>=d&&shown<4){html+='<div style="width:12px;height:12px;border-radius:50%;background:'+CC[d]+';color:'+CT[d]+';display:flex;align-items:center;justify-content:center;font-size:0.32rem;font-weight:700;border:1px dashed rgba(255,255,255,0.3);flex-shrink:0">'+d+'</div>';r-=d;shown++;}});return html;}
+function updateChipStacks(){Object.keys(G.bets).forEach(function(k){var el=document.getElementById('cs-'+k);if(el)el.innerHTML=chipHTML(G.bets[k]);var bz=document.getElementById('bz-'+k);if(bz)bz.classList.toggle('has-bet',G.bets[k]>0);});}
 function placeBet(key){
-  if(G.rolling) return;
-  var isPoint = G.phase === 'pt';
-
-  if(key==='passLine' && isPoint){ toast("Pass Line only before come-out!","info"); return; }
-  if(key==='dontPass' && isPoint){ toast("Don't Pass only before come-out!","info"); return; }
-  if((key==='come'||key==='dontCome') && !isPoint){ toast("Come bet only after point is set!","info"); return; }
-
-  if(G.bal < G.chip){ toast("Not enough chips!","info"); return; }
-  G.bal -= G.chip;
-  G.bets[key] = (G.bets[key]||0) + G.chip;
-  log('Bet $'+G.chip+' on '+BET_NAMES[key]);
-  updateUI();
+  if(G.rolling)return;
+  var isP=G.phase==='pt';
+  if((key==='passLine'||key==='dontPass')&&isP){toast('Only on come-out!','info');return;}
+  if((key==='come'||key==='dontCome')&&!isP){toast('Only after point is set!','info');return;}
+  if(key==='odds'){if(!isP){toast('Odds only after point is set!','info');return;}if(G.bets.passLine<=0){toast('Need Pass Line bet first!','info');return;}}
+  if(G.bal<G.chip){toast('Not enough credits!','info');return;}
+  G.bal-=G.chip;G.bets[key]=(G.bets[key]||0)+G.chip;updateUI();
 }
-
-function clearBets(){
-  if(G.rolling) return;
-  var total = 0;
-  Object.keys(G.bets).forEach(function(k){ total += G.bets[k]; });
-  if(!total) return;
-  G.bal += total;
-  Object.keys(G.bets).forEach(function(k){ G.bets[k]=0; });
-  log('All bets cleared.');
-  updateUI();
-}
-
-// ===== ROLL =====
+function clearBets(){if(G.rolling)return;var t=Object.values(G.bets).reduce(function(a,b){return a+b;},0);if(!t){toast('No bets to clear','info');return;}G.bal+=t;Object.keys(G.bets).forEach(function(k){G.bets[k]=0;});updateUI();}
+function allOff(){toast('ALL OFF — bets inactive next roll','info');}
+function addRH(total){G.rollHistory.unshift(total);if(G.rollHistory.length>20)G.rollHistory.pop();var trk=document.getElementById('rhTrack');trk.innerHTML=G.rollHistory.map(function(r){var c=r===7?'rh-seven':(r===2||r===3||r===12)?'rh-craps':r===G.point?'rh-point':'rh-other';return'<div class="rh-chip '+c+'">'+r+'</div>';}).join('');}
+function updateWC(){var a=new Set();if(G.bets.passLine>0){if(G.phase==='co'){a.add(7);a.add(11);}else if(G.point)a.add(G.point);}if(G.bets.dontPass>0){if(G.phase==='co'){a.add(2);a.add(3);}else if(G.point)[2,3,4,5,6,8,9,10,11,12].forEach(function(n){if(n!==G.point)a.add(n);});}if(G.bets.field>0)[2,3,4,9,10,11,12].forEach(function(n){a.add(n);});if(G.bets.any7>0)a.add(7);if(G.bets.anycraps>0)[2,3,12].forEach(function(n){a.add(n);});[4,5,6,8,9,10].forEach(function(n){if(G.bets['place'+n]>0)a.add(n);});if(G.bets.come>0&&G.phase==='pt'){a.add(7);a.add(11);}if(G.bets.horn>0)[2,3,11,12].forEach(function(n){a.add(n);});var wc=document.getElementById('wcNums');wc.innerHTML=[2,3,4,5,6,7,8,9,10,11,12].map(function(n){var cl=a.has(n)?(n===7?'lit-red':'lit'):'';return'<div class="wc-num '+cl+'">'+n+'</div>';}).join('');}
 function rollDice(){
-  if(G.rolling) return;
-  var totalBet = Object.values(G.bets).reduce(function(a,b){return a+b;},0);
-  if(!totalBet){ toast("Place a bet first!","info"); return; }
-
-  G.rolling = true;
-  document.getElementById('rollBtn').disabled = true;
-
-  var d1el = document.getElementById('die1'), d2el = document.getElementById('die2');
-  d1el.classList.add('rolling'); d2el.classList.add('rolling');
-
-  var flashes = 0;
-  var fi = setInterval(function(){
-    renderDie('die1', rand6()); renderDie('die2', rand6());
-    if(++flashes >= 8) clearInterval(fi);
-  }, 70);
-
+  if(G.rolling)return;
+  var t=Object.values(G.bets).reduce(function(a,b){return a+b;},0);
+  if(!t){toast('Place a bet first!','info');return;}
+  G.rolling=true;
+  document.getElementById('rollBtn').disabled=true;
+  document.getElementById('rollBtn2').disabled=true;
+  var d1=document.getElementById('die1'),d2=document.getElementById('die2');
+  d1.classList.add('rolling');d2.classList.add('rolling');
+  var f=0,fi=setInterval(function(){renderDie('die1',r6());renderDie('die2',r6());if(++f>=8)clearInterval(fi);},65);
   setTimeout(function(){
-    d1el.classList.remove('rolling'); d2el.classList.remove('rolling');
-    var d1=rand6(), d2=rand6(), total=d1+d2;
-    renderDie('die1',d1); renderDie('die2',d2);
-    document.getElementById('diceTotal').textContent = total;
-    log('Rolled '+d1+' + '+d2+' = '+total,'roll');
-    resolveRoll(total);
-    G.rolling = false;
-    document.getElementById('rollBtn').disabled = false;
+    d1.classList.remove('rolling');d2.classList.remove('rolling');
+    var v1=r6(),v2=r6(),total=v1+v2;
+    renderDie('die1',v1);renderDie('die2',v2);
+    document.getElementById('diceTotal').textContent=total;
+    addRH(total);resolveRoll(v1,v2,total);
+    G.rolling=false;document.getElementById('rollBtn').disabled=false;document.getElementById('rollBtn2').disabled=false;
     updateUI();
-  }, 680);
+  },550);
 }
-
-// ===== RESOLVE =====
-function resolveRoll(total){
-  var net = 0;
-
-  if(G.phase === 'co'){
-    // PASS LINE
-    var pl = G.bets.passLine;
-    if(pl > 0){
-      if(total===7 || total===11){
-        net += pl*2;
-        log('Pass Line WON $'+pl+'! Natural!','win');
-        G.bets.passLine = 0;
-      } else if(total===2||total===3||total===12){
-        log('Pass Line lost. Craps!','lose');
-        G.bets.passLine = 0;
-      }
-    }
-    // DON'T PASS
-    var dp = G.bets.dontPass;
-    if(dp > 0){
-      if(total===2||total===3){
-        net += dp*2;
-        log("Don't Pass WON $"+dp+'!','win');
-        G.bets.dontPass = 0;
-      } else if(total===12){
-        net += dp; // push
-        log("Don't Pass push on 12.",'');
-        G.bets.dontPass = 0;
-      } else if(total===7||total===11){
-        log("Don't Pass lost.",'lose');
-        G.bets.dontPass = 0;
-      }
-    }
-    // ONE-ROLL BETS
-    net += oneRoll('any7',total,[7],4);
-    net += oneRoll('anycraps',total,[2,3,12],7);
-    net += resolveField(total);
-    // POINT SET?
-    if(![2,3,7,11,12].includes(total)){
-      G.phase='pt'; G.point=total;
-      log('Point set: '+total,'info');
-    } else if(total===7||total===11){
-      setMsg(total+' — Natural! 🎉','win');
-    } else {
-      setMsg('Craps! '+total,'lose');
-    }
-
+function addNet(n){G.bal+=n;}
+function win(key,mult,label){var bet=G.bets[key];if(!bet)return 0;G.bets[key]=0;var w=Math.floor(bet*mult);G.sessionWin+=w;document.getElementById('sWin').textContent=G.sessionWin.toFixed(2);toast(label+' $'+w+'!','win');return bet+w;}
+function lose(key){var b=G.bets[key];if(b)G.bets[key]=0;}
+function resolveRoll(d1,d2,total){
+  var net=0,isHard=(d1===d2),isP=G.phase==='pt';
+  if(!isP){
+    // come-out
+    if(total===7||total===11)net+=win('passLine',1,'Pass Line WON');
+    else if(total===2||total===3||total===12)lose('passLine');
+    if(total===2||total===3)net+=win('dontPass',1,"Don't Pass WON");
+    else if(total===12){var dp=G.bets.dontPass;G.bets.dontPass=0;net+=dp;}
+    else if(total===7||total===11)lose('dontPass');
+    net+=rField(total);net+=rAny7(total);net+=rAC(total);net+=rHorn(total);net+=rCE(total);
+    if(![2,3,7,11,12].includes(total)){G.phase='pt';G.point=total;toast('Point: '+total,'info');document.getElementById('phaseHint').textContent='Hit '+total+' before the 7!';}
+    else if(total===7||total===11)document.getElementById('phaseHint').textContent='Natural! Pass wins 🎉';
+    else document.getElementById('phaseHint').textContent='Craps! Pass loses.';
   } else {
-    // POINT PHASE
-    // COME BET
-    var co = G.bets.come;
-    if(co > 0){
-      if(total===7||total===11){ net+=co*2; log('Come bet WON $'+co+'!','win'); G.bets.come=0; }
-      else if(total===2||total===3||total===12){ log('Come bet lost.','lose'); G.bets.come=0; }
+    // point phase
+    if(G.bets.passLine>0){
+      if(total===G.point){var pl=G.bets.passLine,od=G.bets.odds;G.bets.passLine=0;G.bets.odds=0;var op=oddsP(G.point,od);net+=pl*2+od+op;G.sessionWin+=pl+op;document.getElementById('sWin').textContent=G.sessionWin.toFixed(2);toast('POINT '+total+'! Pass wins! 🎉','win');document.getElementById('phaseHint').textContent='Point hit! New come-out.';G.phase='co';G.point=null;}
+      else if(total===7){lose('passLine');lose('odds');toast('Seven Out 💀','lose');document.getElementById('phaseHint').textContent='Seven out. Round ends.';G.phase='co';G.point=null;}
     }
-    // DON'T COME
-    var dc = G.bets.dontCome;
-    if(dc > 0){
-      if(total===2||total===3){ net+=dc*2; log("Don't Come WON!","win"); G.bets.dontCome=0; }
-      else if(total===12){ net+=dc; G.bets.dontCome=0; }
-      else if(total===7||total===11){ log("Don't Come lost.","lose"); G.bets.dontCome=0; }
-    }
-    // PLACE BETS (persist until 7)
-    [4,5,6,8,9,10].forEach(function(n){ net += resolvePlace(n, total); });
-    // ONE-ROLL BETS
-    net += oneRoll('any7',total,[7],4);
-    net += oneRoll('anycraps',total,[2,3,12],7);
-    net += resolveField(total);
-
-    if(total === G.point){
-      var pl2 = G.bets.passLine;
-      if(pl2>0){ net+=pl2*2; log('POINT HIT! Pass Line won $'+pl2+'! 🎉','win'); G.bets.passLine=0; }
-      var dp2 = G.bets.dontPass;
-      if(dp2>0){ log("Don't Pass lost (point hit).",'lose'); G.bets.dontPass=0; }
-      toast('🎉 Point '+total+' hit! You win!','win');
-      setMsg('POINT '+total+'! Pass Wins! 🎉','win');
-      G.phase='co'; G.point=null;
-
-    } else if(total===7){
-      var pl3 = G.bets.passLine;
-      if(pl3>0){ log('Seven out! Pass Line lost $'+pl3+'.','lose'); G.bets.passLine=0; }
-      var dp3 = G.bets.dontPass;
-      if(dp3>0){ net+=dp3*2; log("Seven out! Don't Pass won $"+dp3+'!','win'); G.bets.dontPass=0; }
-      // Place bets lose on 7
-      [4,5,6,8,9,10].forEach(function(n){
-        var k='place'+n;
-        if(G.bets[k]>0){ log('Place '+n+' lost (7-out).','lose'); G.bets[k]=0; }
-      });
-      if(G.bets.come>0){ log('Come bet lost (7-out).','lose'); G.bets.come=0; }
-      toast('SEVEN OUT 💀','lose');
-      setMsg('SEVEN OUT 💀','lose');
-      G.phase='co'; G.point=null;
-    } else {
-      setMsg('Rolled '+total+' — point is '+G.point,'n');
-    }
+    if(G.bets.dontPass>0){if(total===7)net+=win('dontPass',1,"Don't Pass WON");else if(total===G.point)lose('dontPass');}
+    if(G.bets.come>0){if(total===7||total===11)net+=win('come',1,'Come WON');else if(total===2||total===3||total===12)lose('come');}
+    if(G.bets.dontCome>0){if(total===2||total===3)net+=win('dontCome',1,"Don't Come WON");else if(total===12){var dc=G.bets.dontCome;G.bets.dontCome=0;net+=dc;}else if(total===7||total===11)lose('dontCome');}
+    [4,5,6,8,9,10].forEach(function(n){var k='place'+n,bet=G.bets[k];if(!bet)return;if(total===n){var pr=(n===4||n===10)?9/5:(n===5||n===9)?7/5:7/6;var w=Math.floor(bet*pr);net+=w;G.sessionWin+=w;document.getElementById('sWin').textContent=G.sessionWin.toFixed(2);toast('Place '+n+' paid $'+w+'!','win');}else if(total===7)lose(k);});
+    // Hardways
+    [4,6,8,10].forEach(function(n){var k='hard'+n,bet=G.bets[k];if(!bet)return;if(total===7){lose(k);}else if(total===n){if(isHard){var p=(n===4||n===10)?7:9;var w=bet*p;G.bets[k]=0;net+=bet+w;G.sessionWin+=w;document.getElementById('sWin').textContent=G.sessionWin.toFixed(2);toast('HARD '+n+' WON $'+w+'!','win');}else lose(k);}});
+    net+=rField(total);net+=rAny7(total);net+=rAC(total);net+=rHorn(total);net+=rCE(total);
+    if(total!==G.point&&total!==7&&G.phase==='pt')document.getElementById('phaseHint').textContent='Rolled '+total+' — need '+G.point;
   }
-
-  G.bal += net;
-  if(G.bal<=0 && Object.values(G.bets).every(function(v){return v===0;})){
-    toast("Out of chips! New game.",'info');
-    log('Out of chips! New game started.','info');
-    G.bal=500; G.phase='co'; G.point=null;
-    Object.keys(G.bets).forEach(function(k){G.bets[k]=0;});
-  }
+  G.bal+=net;
+  if(G.bal<=0&&Object.values(G.bets).every(function(v){return v===0;})){toast('Out of credits!','info');G.bal=500;G.phase='co';G.point=null;G.sessionWin=0;Object.keys(G.bets).forEach(function(k){G.bets[k]=0;});}
 }
-
-function oneRoll(key, total, wins, mult){
-  var bet = G.bets[key];
-  if(!bet||bet<=0) return 0;
-  G.bets[key]=0;
-  if(wins.includes(total)){
-    var w=bet*mult;
-    log(BET_NAMES[key]+' WON $'+w+'!','win');
-    return bet+w;
-  }
-  log(BET_NAMES[key]+' lost.','lose');
-  return 0;
-}
-
-function resolveField(total){
-  var bet = G.bets.field;
-  if(!bet||bet<=0) return 0;
-  G.bets.field=0;
-  var wins=[2,3,4,9,10,11,12];
-  if(!wins.includes(total)){ log('Field lost on '+total+'.','lose'); return 0; }
-  if(total===2||total===12){ log('Field 2:1 on '+total+'! Won $'+(bet*2)+'!','win'); return bet+bet*2; }
-  log('Field won $'+bet+'!','win');
-  return bet*2;
-}
-
-function resolvePlace(num, total){
-  var key='place'+num, bet=G.bets[key];
-  if(!bet||bet<=0) return 0;
-  if(total!==num) return 0; // 7-out handled elsewhere
-  var pay = (num===4||num===10) ? 9/5 : (num===5||num===9) ? 7/5 : 7/6;
-  var win = Math.floor(bet*pay);
-  log('Place '+num+' WON $'+win+'!','win');
-  return win; // stake stays on table
-}
-
-function setMsg(txt, type){
-  var el = document.getElementById('diceMsg');
-  el.textContent = txt;
-  el.className = 'dice-msg dm-'+(type||'n');
-}
-
-// ===== UPDATE UI =====
+function oddsP(pt,bet){if(!bet)return 0;if(pt===4||pt===10)return bet*2;if(pt===5||pt===9)return Math.floor(bet*3/2);return Math.floor(bet*6/5);}
+function rField(total){var b=G.bets.field;if(!b)return 0;G.bets.field=0;if([2,3,4,9,10,11,12].includes(total)){var m=(total===2||total===12)?2:1;var w=Math.floor(b*m);toast('Field WON $'+w+'!','win');return b+w;}return 0;}
+function rAny7(total){var b=G.bets.any7;if(!b)return 0;G.bets.any7=0;if(total===7){var w=b*4;toast('Any 7 WON $'+w+'!','win');return b+w;}return 0;}
+function rAC(total){var b=G.bets.anycraps;if(!b)return 0;G.bets.anycraps=0;if(total===2||total===3||total===12){var w=b*7;toast('Any Craps WON $'+w+'!','win');return b+w;}return 0;}
+function rHorn(total){var b=G.bets.horn;if(!b)return 0;G.bets.horn=0;var u=Math.floor(b/4);if(total===2||total===12){var w=u*27;toast('Horn WON $'+w+'!','win');return u+w;}if(total===3||total===11){var w2=u*15;toast('Horn WON $'+w2+'!','win');return u+w2;}return 0;}
+function rCE(total){var b=G.bets.ce;if(!b)return 0;G.bets.ce=0;if(total===2||total===3||total===12){var w=b*3;toast('C&E WON $'+w+'!','win');return b+w;}if(total===11){var w2=b*7;toast('C&E WON $'+w2+'!','win');return b+w2;}return 0;}
 function updateUI(){
-  document.getElementById('balAmt').textContent = G.bal;
-
-  var isPoint = G.phase==='pt';
-  var pd = document.getElementById('phaseDisp');
-  if(!isPoint){
-    pd.textContent='COME-OUT ROLL'; pd.className='status-phase phase-co';
-    document.getElementById('phaseHint').textContent='Place your Pass Line bet and roll!';
-  } else {
-    pd.textContent='POINT PHASE'; pd.className='status-phase phase-pt';
-    document.getElementById('phaseHint').textContent='Roll '+G.point+' to win — avoid the 7!';
-  }
-
-  var pk = document.getElementById('ptPuck');
-  if(G.point){ pk.textContent=G.point; pk.className='point-puck puck-on'; }
-  else { pk.textContent='OFF'; pk.className='point-puck puck-off'; }
-
-  // Zone enable/disable
-  document.getElementById('bz-passLine').classList.toggle('bz-off', isPoint);
-  document.getElementById('bz-dontPass').classList.toggle('bz-off', isPoint);
-  document.getElementById('bz-come').classList.toggle('bz-off', !isPoint);
-  document.getElementById('bz-dontCome').classList.toggle('bz-off', !isPoint);
-
-  // Highlight point number on place bets
-  [4,5,6,8,9,10].forEach(function(n){
-    var el = document.getElementById('bz-place'+n);
-    if(el){ el.classList.toggle('is-pt', G.point===n); }
-  });
-
-  updateChipStacks();
-
-  var total = Object.values(G.bets).reduce(function(a,b){return a+b;},0);
-  document.getElementById('totalBets').textContent = 'Total wagered: $'+total;
+  var isP=G.phase==='pt';
+  document.getElementById('sCred').textContent=G.bal;
+  var tb=Object.values(G.bets).reduce(function(a,b){return a+b;},0);
+  document.getElementById('sBet').textContent=tb.toFixed(2);
+  document.getElementById('totalBet').textContent='Wagered: $'+tb;
+  var pt=document.getElementById('phaseTitle');
+  if(!isP){pt.textContent='COME-OUT ROLL';pt.style.color='#7090ff';}
+  else{pt.textContent='POINT PHASE — '+G.point;pt.style.color='#e8c030';}
+  [4,5,6,8,9,10].forEach(function(n){var pk=document.getElementById('pk-'+n),nc=document.getElementById('nc-'+n);if(!pk||!nc)return;if(G.point===n){pk.textContent='ON';pk.className='num-puck puck-on';nc.classList.add('is-point');}else{pk.textContent='OFF';pk.className='num-puck puck-off';nc.classList.remove('is-point');}});
+  // Phase zone toggling
+  var coZ=['bz-passLine','bz-dontPass'];var ptZ=['bz-come','bz-dontCome'];
+  coZ.forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle('z-off',isP);});
+  ptZ.forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle('z-off',!isP);});
+  // Odds
+  var od=document.getElementById('bz-odds'),oi=document.getElementById('oddsInfo');
+  if(!isP||G.bets.passLine<=0){od.classList.add('z-off');oi.textContent=isP?'need Pass Line bet':'available after point is set';}
+  else{od.classList.remove('z-off');var ol=G.point===4||G.point===10?'pays 2:1':G.point===5||G.point===9?'pays 3:2':'pays 6:5';oi.textContent='point '+G.point+' — '+ol+' · 0% house edge!';}
+  updateChipStacks();updateWC();
 }
+function newGame(){if(G.rolling)return;G.bal=500;G.phase='co';G.point=null;G.sessionWin=0;Object.keys(G.bets).forEach(function(k){G.bets[k]=0;});G.rollHistory=[];document.getElementById('rhTrack').innerHTML='';document.getElementById('diceTotal').textContent='—';document.getElementById('sWin').textContent='0.00';document.getElementById('phaseHint').textContent='Bet Pass Line & roll!';initDice();updateUI();}
 
-function newGame(){
-  if(G.rolling) return;
-  G.bal=500; G.phase='co'; G.point=null;
-  Object.keys(G.bets).forEach(function(k){G.bets[k]=0;});
-  initDice();
-  document.getElementById('diceTotal').textContent='—';
-  setMsg('Place bets & roll','n');
-  log('New game started — $500.','info');
-  updateUI();
-}
+// PWA
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
+var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+function isSA(){return window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone;}
+if(isIOS&&!isSA()&&!sessionStorage.getItem('ib')){setTimeout(function(){document.getElementById('ib').classList.add('show');},4000);}
+document.getElementById('ibc').addEventListener('click',function(){document.getElementById('ib').classList.remove('show');sessionStorage.setItem('ib','1');});
 
-// ===== INIT =====
-initDice();
-updateUI();
+initDice();updateUI();
 </script>
-
-<div id="installBanner">
-  <div class="ib-icon">🎲</div>
-  <div class="ib-text">
-    <strong>Add to Home Screen</strong>
-    Tap the Share button below, then "Add to Home Screen" to install Craps Royale as an app!
-  </div>
-  <button onclick="document.getElementById('installBanner').classList.remove('show')" aria-label="Close">✕</button>
-</div>
-
-<script>
-// Service Worker registration
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('./sw.js')
-      .then(function(r){ console.log('SW registered'); })
-      .catch(function(e){ console.log('SW failed:', e); });
-  });
-}
-
-// Show iOS install hint after 3 seconds if not already installed
-function isInStandaloneMode(){ return (window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone; }
-var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-if(isIOS && !isInStandaloneMode() && !sessionStorage.getItem('hiddenInstall')){
-  setTimeout(function(){
-    document.getElementById('installBanner').classList.add('show');
-  }, 3000);
-}
-document.querySelector('#installBanner button').addEventListener('click', function(){
-  sessionStorage.setItem('hiddenInstall','1');
-});
-
-// Android/Chrome install prompt
-var deferredPrompt;
-window.addEventListener('beforeinstallprompt', function(e){
-  e.preventDefault();
-  deferredPrompt = e;
-  var banner = document.getElementById('installBanner');
-  banner.querySelector('.ib-text strong').textContent = 'Install Craps Royale';
-  banner.querySelector('.ib-text').innerHTML = '<strong>Install Craps Royale</strong>Tap to add the app to your home screen for offline play!';
-  banner.classList.add('show');
-  banner.style.cursor = 'pointer';
-  banner.addEventListener('click', function(){
-    banner.classList.remove('show');
-    deferredPrompt.prompt();
-  });
-});
-</script>
-
 </body>
 </html>
